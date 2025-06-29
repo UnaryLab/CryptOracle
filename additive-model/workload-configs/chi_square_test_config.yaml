@@ -1,0 +1,28 @@
+### Application Information ###
+name: "chi_square_test" # Name of the application from the CSV
+description: "Chi square test implementation using CKKS scheme" # Description of the application
+title: "chi_square_test" # Title to be used in the plot
+event_type: "Energy" # Event type being esimated
+
+### CSV Paths ###
+primitive_benchmarks: "datasets/amd/primitives/chi-square-primitives.csv" # Path to the primitive benchmarks CSV
+actual_benchmarks: "datasets/amd/workloads/chi-square-results.csv" # Path to the actual application CSV for model validation (optional)
+
+### Performance Model Parameters ###
+parameters:
+  security_standard_level: none
+  n: 17
+  depth: 3
+  num_threads: sweep
+
+### Application Homomorphic Operation Counts ###
+operation_counts:
+  CKKS_MultNoRelin: 207
+  CKKS_Add: 598
+  CKKS_ModReduce: 7
+  CKKS_LevelReduce: 6
+  CKKS_Sub: 7
+  CKKS_Mult_Scalar: 3
+
+### Statistical Methods ###
+statistic: "median" # Options: median, mean

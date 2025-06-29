@@ -1,0 +1,5 @@
+workloads:
+  - cifar10
+  - low_memory_resnet20
+  - logistic_regression
+  - chi_square_test

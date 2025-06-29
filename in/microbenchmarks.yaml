@@ -1,0 +1,4 @@
+microbenchmarks:
+  - matrix_multiplication
+  - sign_eval
+  - logistic_function

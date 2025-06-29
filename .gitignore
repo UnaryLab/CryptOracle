@@ -1,0 +1,15 @@
+benchmarks/ckks-primitives-serialized/build/
+util/flamegraph
+openfhe-development
+openfhe-development-install/
+out/
+__pycache__/
+.vscode/
+benchmarks/polycircuit/
+benchmarks/polycircuit-install/
+benchmarks/contrib/
+benchmarks/openfhe-genomic-examples/
+benchmarks/openfhe-logreg-training-examples/
+util/cryptocontext-generator/serialized-files/
+util/cryptocontext-generator/build/
+flamegraph-temp/

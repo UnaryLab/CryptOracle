@@ -1,0 +1,30 @@
+security_standard_level:
+  - 128c
+  - 192c
+  - 256c
+  - none
+n:
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17
+  
+depth:
+  - 10
+  - 12
+  - 14
+  - 16
+  - 18
+  - 20
+
+batch_size:
+  - 12
+
+num_threads:
+  - 1
+  - 2
+  - 4
+  - 8
+  - 16
+  - 0

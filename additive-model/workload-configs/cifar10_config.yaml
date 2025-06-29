@@ -1,0 +1,29 @@
+### Application Information ###
+name: "cifar10" # Name of the application from the CSV
+description: "Cifar10 inference implementation using CKKS scheme with plaintext weights" # Description of the application
+title: "cifar10" # Title to be used in the plot
+event_type: "Time" # Event type being esimated
+
+### CSV Paths ###
+primitive_benchmarks: "datasets/amd/primitives/cifar10-primitives.csv" # Path to the primitive benchmarks CSV
+actual_benchmarks: "datasets/amd/workloads/all-workloads-no-resnet-results.csv" # Path to the actual application CSV for model validation (optional)
+
+### Performance Model Parameters ###
+parameters:
+  security_standard_level: none
+  n: 16
+  depth: 10
+  num_threads: 8
+
+### Application Homomorphic Operation Counts ###
+operation_counts:
+  CKKS_Add: 47
+  CKKS_Add_Plaintext: 2
+  CKKS_Sub: 3
+  CKKS_Sub_Scalar: 4
+  CKKS_Mult: 7
+  CKKS_Mult_Plaintext: 33
+  CKKS_Rotate: 33
+
+### Statistical Methods ###
+statistic: "median" # Options: median, mean

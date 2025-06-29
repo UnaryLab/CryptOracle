@@ -1,0 +1,28 @@
+perf_events:
+  # Basic Performance Counters
+  - "instructions"
+  - "cpu-cycles"
+  - "cache-references"
+  - "cache-misses"
+  - "branches"
+  - "branch-misses"
+
+  # L1 Cache
+  - "L1-dcache-loads"
+  - "L1-dcache-load-misses"
+  - "L1-icache-loads"
+  - "L1-icache-load-misses"
+
+  # TLB
+  - "dTLB-loads"
+  - "dTLB-load-misses"
+  - "iTLB-loads"
+  - "iTLB-load-misses"
+
+  # Page Faults
+  - "page-faults"
+  - "minor-faults"
+
+
+
+  

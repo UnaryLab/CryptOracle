@@ -1,0 +1,28 @@
+### Application Information ###
+name: "sign_eval" # Name of the application from the CSV
+description: "Sign evaluation implementation using CKKS scheme" # Description of the application
+title: "sign_eval" # Title to be used in the plot
+event_type: "Time" # Event type being esimated
+
+### CSV Paths ###
+primitive_benchmarks: "datasets/amd/primitives/all-primitives-timing-results.csv" # Path to the primitive benchmarks CSV
+actual_benchmarks: "datasets/amd/microbenchmarks/microbenchmark-results.csv" # Path to the actual application CSV for model validation (optional)
+
+### Performance Model Parameters ###
+parameters:
+  security_standard_level: none
+  n: 16
+  depth: 10
+  num_threads: sweep
+
+### Application Homomorphic Operation Counts ###
+operation_counts:
+  CKKS_Add: 519
+  CKKS_Sub: 310
+  CKKS_Sub_Scalar: 256
+  CKKS_Mult: 568 # 568
+  CKKS_Mult_Scalar: 61 
+  CKKS_Chebyshev_Series: 1 
+
+### Statistical Methods ###
+statistic: "median" # Options: median, mean

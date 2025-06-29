@@ -1,0 +1,33 @@
+[submodule "openfhe-development"]
+	path = openfhe-development
+	url = https://github.com/openfheorg/openfhe-development.git
+[submodule "util/flamegraph"]
+	path = util/flamegraph
+	url = https://github.com/brendangregg/FlameGraph.git
+[submodule "benchmarks/openfhe-logreg-training-examples"]
+	path = benchmarks/openfhe-logreg-training-examples
+	url = https://github.com/openfheorg/openfhe-logreg-training-examples
+[submodule "benchmarks/openfhe-genomic-examples"]
+	path = benchmarks/openfhe-genomic-examples
+	url = https://github.com/openfheorg/openfhe-genomic-examples
+[submodule "benchmarks/contrib"]
+	path = benchmarks/contrib
+	url = https://github.com/openfheorg/contrib.git
+[submodule "benchmarks/polycircuit"]
+	path = benchmarks/polycircuit
+	url = https://github.com/fairmath/polycircuit.git
+[submodule "/home/co224015/profiling-instance/CryptOracle/util/flamegraph"]
+	path = /home/co224015/profiling-instance/CryptOracle/util/flamegraph
+	url = https://github.com/brendangregg/FlameGraph.git
+[submodule "/home/co224015/profiling-instance/CryptOracle/openfhe-development"]
+	path = /home/co224015/profiling-instance/CryptOracle/openfhe-development
+	url = https://github.com/openfheorg/openfhe-development.git
+[submodule "/home/co224015/profiling-instance/CryptOracle/benchmarks/contrib"]
+	path = /home/co224015/profiling-instance/CryptOracle/benchmarks/contrib
+	url = https://github.com/openfheorg/contrib.git
+[submodule "/home/co224015/profiling-instance/CryptOracle/benchmarks/openfhe-logreg-training-examples"]
+	path = /home/co224015/profiling-instance/CryptOracle/benchmarks/openfhe-logreg-training-examples
+	url = https://github.com/openfheorg/openfhe-logreg-training-examples
+[submodule "/home/co224015/profiling-instance/CryptOracle/benchmarks/openfhe-genomic-examples"]
+	path = /home/co224015/profiling-instance/CryptOracle/benchmarks/openfhe-genomic-examples
+	url = https://github.com/openfheorg/openfhe-genomic-examples

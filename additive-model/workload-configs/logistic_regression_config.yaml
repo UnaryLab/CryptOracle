@@ -1,0 +1,29 @@
+### Application Information ###
+name: "logistic_regression" # Name of the application from the CSV
+description: "Logistic regression training implementation using CKKS scheme" # Description of the application
+title: "logistic_regression" # Title to be used in the plot
+event_type: "Time" # Event type being esimated
+
+### CSV Paths ###
+primitive_benchmarks: "datasets/amd/primitives/resnet-logreg-primitives.csv" # Path to the primitive benchmarks CSV
+actual_benchmarks: "datasets/amd/workloads/all-workloads-no-resnet-results.csv" # Path to the actual application CSV for model validation (optional)
+
+### Performance Model Parameters ###
+parameters:
+  security_standard_level: "128c"
+  n: 12
+  depth: 14
+  num_threads: 1
+
+### Application Homomorphic Operation Counts ###
+operation_counts:
+  CKKS_Mult_Plaintext: 40
+  CKKS_Add: 39
+  CKKS_Rotate: 20
+  CKKS_Bootstrap: 9
+  CKKS_Sub: 19
+  CKKS_Mult: 9
+  CKKS_Logistic: 10
+
+### Statistical Methods ###
+statistic: "median" # Options: median, mean

@@ -1,12 +1,9 @@
 import argparse
 import os
 import shutil
-import re
 import yaml
 import subprocess
 from datetime import datetime
-from pathlib import Path
-import csv
 from typing import List, Dict
 from src.globals import script_globals
 import src.utils as utils

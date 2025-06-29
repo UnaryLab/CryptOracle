@@ -1,4 +1,3 @@
-import statistics
 import os
 
 def parse_data(file_path):

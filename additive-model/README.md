@@ -1,7 +1,7 @@
 CryptOracle Additive Model README
 
 This module estimates application performance for a specified metric using an analytic performance model
-based on primitive profiling results. It also optionally compares estimated performance against actual profiling
+based on primitive profiling results. It also optionally compares estimated performance against actual profiling.
 
 Key Features:
     - Estimation of application performance using primitive operation benchmarks

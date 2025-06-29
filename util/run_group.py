@@ -16,7 +16,6 @@ from src.logging_utils import (
     print_status,
     print_timestamp,
     print_error,
-    print_argument,
     print_info,
     print_error
 )

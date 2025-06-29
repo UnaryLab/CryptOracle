@@ -1,4 +1,4 @@
-//#pragma once
+// #pragma once
 
 #include "polycircuit/IComponent.hpp"
 
@@ -61,7 +61,7 @@ public:
         std::vector<lbcrypto::Ciphertext<ElementType>> out(32);
         std::vector<lbcrypto::Plaintext> plaintext_mask(2);
 
-        //#pragma omp parallel for collapse(2)
+        // #pragma omp parallel for collapse(2)
         for (int k = 0; k < 4; k++)
         {
             for (int i = 0; i < m_matrixSize; i++)
@@ -71,15 +71,15 @@ public:
             }
         }
 
-        //#pragma omp parallel for
+        // #pragma omp parallel for
         for (int j = 0; j < 2; j++)
         {
             plaintext_mask[j] = m_cc->MakeCKKSPackedPlaintext(mask[j]);
         }
 
-        //#pragma omp parallel sections
+        // #pragma omp parallel sections
         {
-            //#pragma omp section
+            // #pragma omp section
             {
                 #ifdef REMOVE_INPLACE_FUNCTIONS
                     lbcrypto::Ciphertext<ElementType> temp = m_cc->EvalRotate(m_MatrixAC, -m_matrixSize * m_matrixSize + 1);
@@ -93,7 +93,7 @@ public:
                 evalRotateCount++;
                 #endif
             }
-            //#pragma omp section
+            // #pragma omp section
             {
                 #ifdef REMOVE_INPLACE_FUNCTIONS
                     lbcrypto::Ciphertext<ElementType> temp = m_cc->EvalRotate(m_MatrixBC, -m_matrixSize * m_matrixSize + m_matrixSize);
@@ -112,7 +112,7 @@ public:
         const int m_matrixSize_log = std::log2(m_matrixSize);
         const int m_matrixSizeHalf_log = std::log2(m_matrixSize / 2);
 
-        //#pragma omp parallel for shared(m_MatrixAC, m_MatrixBC, plaintext_mask)
+        // #pragma omp parallel for shared(m_MatrixAC, m_MatrixBC, plaintext_mask)
         for (int t = 0; t < (m_matrixSize / 2); t++)
         {
             std::vector<lbcrypto::Ciphertext<ElementType>> ab1(2), ab2(2);
@@ -159,7 +159,7 @@ public:
 
         for (int i = 1; i <= m_matrixSizeHalf_log; i++)
         {
-            //#pragma omp parallel for
+            // #pragma omp parallel for
             for (int t = 0; t < static_cast<int>(m_matrixSize / std::pow(2, i + 1)); t++)
             {
                 m_cc->EvalAddInPlace(out[t], out[t + static_cast<int>(m_matrixSize / std::pow(2, i + 1))]);

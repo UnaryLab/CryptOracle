@@ -34,7 +34,7 @@
 /* Please comment/uncomment these as you see fit:
  * ENABLE_INFO will display informational output during the run
  * ENABLE_DEBUG will display debug info, like actual matrix values
- */
+*/
 //#define ENABLE_DEBUG
 
 #include "openfhe.h"
@@ -108,7 +108,7 @@ void debugWeights(
   std::cout << "\t\tTHETA: " << ptTheta << std::endl;
   std::cout << "\t\tPHI: " << ptPhi << std::endl;
 
-    std::cout << "\tExiting DebugWeights function" << std::endl;
+  std::cout << "\tExiting DebugWeights function" << std::endl;
 }
 
 int main(int argc, char *argv[]) {

@@ -1,7 +1,6 @@
 import os
 import argparse
 import subprocess
-import shutil
 import src.logging_utils as log
 from src.globals import script_globals
 import src.utils as utils

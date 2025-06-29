@@ -2,7 +2,6 @@ import argparse
 import os
 import shutil
 import subprocess
-import csv
 from datetime import datetime
 from typing import List, Dict
 from src.globals import script_globals
@@ -12,7 +11,6 @@ from src.logging_utils import print_info, print_error, print_status, print_secti
 from src.microbenchmark_profiling import build_and_install_polycircuit
 import src.logging_utils as log
 import re
-import sys
 import yaml
 import zipfile
 import subprocess

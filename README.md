@@ -18,6 +18,8 @@ This repository aims to be a standarizing benchmark framework for Homomorphic En
 
 ## System Dependencies  
 
+#### Note: Provided commands assume you are already in the "CryptOracle" directory!
+
 ### Required Packages  
 
 - **Git**: For version control and repository management.  
@@ -62,8 +64,15 @@ sudo apt install -y git cmake autoconf build-essential libtool \
 If you encounter "error while loading shared libraries" when running the benchmarks, you may need to set the `LD_LIBRARY_PATH` environment variable to include the OpenFHE library installation directory:
 
 ```bash
-# Set LD_LIBRARY_PATH to include the OpenFHE libraries
-export LD_LIBRARY_PATH=path/to/cloned/repository/openfhe-development-install/lib:$LD_LIBRARY_PATH
+# Absolute path to openfhe-development-install/lib (works even if it doesn't exist yet)
+LIB_DIR="$(pwd)/openfhe-development-install/lib"
+
+# Export for this shell session
+export LD_LIBRARY_PATH="$LIB_DIR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+
+# Persist to ~/.bashrc if not already there
+grep -qxF "export LD_LIBRARY_PATH=\"$LIB_DIR:\$LD_LIBRARY_PATH\"" ~/.bashrc ||
+    echo "export LD_LIBRARY_PATH=\"$LIB_DIR:\$LD_LIBRARY_PATH\"" >> ~/.bashrc
 ```
 
 For persistence across terminal sessions, add this line to your `~/.bashrc` or `~/.profile` file:
@@ -84,7 +93,6 @@ For persistence across terminal sessions, add this line to your `~/.bashrc` or `
 - **YAML / CSV / Datetime**: File parsing and time manipulation.  
 - **Psutil**: System and process monitoring.  
 - **Cpuinfo / GPUtil / Dmidecode**: Detailed hardware information (CPU, GPU, memory).  
-- **PyTorch**: Deep learning framework.  
 - **Pandas**: Data manipulation and analysis.  
 - **Numpy**: Numerical computations.  
 - **Matplotlib**: Visualization library.  
@@ -92,19 +100,33 @@ For persistence across terminal sessions, add this line to your `~/.bashrc` or `
 ### Installation of Python Dependencies  
 
 ```bash
-pip3 install pandas numpy matplotlib pyyaml
+# Create the venv 
+python3 -m venv .venv
+# Activate venv
+source .venv/bin/activate
+# Update and install pip deps
+pip install --upgrade pip
+pip install \
+    psutil \
+    py-cpuinfo \
+    GPUtil \
+    dmidecode \
+    pyyaml \
+    pandas \
+    numpy \
+    matplotlib
 ```
 
 ## Running Microbenchmarks  
 
 ```bash
-python3 benchmark.py --power-latency-analysis True --runtime-analysis True --build True
+python3 benchmark-main.py --power-latency-analysis True --runtime-analysis True --build True
 ```
 
 ## Complete CLI Example with Defaults  
 
 ```bash
-python3 benchmark.py \
+python3 benchmark-main.py \
     -s none \
     -n 13 \
     -b 12 \
@@ -127,8 +149,8 @@ python3 benchmark.py \
 | `-d, --depth`                  | `5`               | Sets the CKKS computation depth (positive integer).                                           |
 | `-t, --num-threads`            | `0`               | Number of threads OpenFHE is permitted to use (0 uses all available threads).                 |
 | `-p, --run-primitives`         | `False`           | Enables/disables primitive analysis (Primitives set in `in/primitives.yaml`).                 |
-| `-p, --run-microbenchmarks`    | `False`           | Enables/disables microbenchmark analysis (Microbenchmarks set in `in/microbenchmarks.yaml`)   |
-| `-p, --run-workloads`          | `False`           | Enables/disables workload analysis (Workloads set in `in/workloads.yaml`).                    |
+| `-k, --run-microbenchmarks`    | `False`           | Enables/disables microbenchmark analysis (Microbenchmarks set in `in/microbenchmarks.yaml`)   |
+| `-w, --run-workloads`          | `False`           | Enables/disables workload analysis (Workloads set in `in/workloads.yaml`).                    |
 | `-l, --power-latency-analysis` | `True`            | Enables/disables latency/power data collection. Must be `True` if runtime analysis is enabled.|
 | `-r, --runtime-analysis`       | `True`            | Enables/disables runtime analysis.                                                            |
 | `-f, --flamegraph-generation`  | `False`           | Enables/disables FlameGraph generation.                                                       |

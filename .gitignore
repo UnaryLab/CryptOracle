@@ -5,6 +5,7 @@ openfhe-development-install/
 out/
 __pycache__/
 .vscode/
+.venv/
 benchmarks/polycircuit/
 benchmarks/polycircuit-install/
 benchmarks/contrib/

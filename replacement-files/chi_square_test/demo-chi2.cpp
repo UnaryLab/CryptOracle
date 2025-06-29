@@ -153,7 +153,7 @@ void RunChi2(const string &SNPDir,
 
 	ReadSNPFile(headersS,sData,yData,SNPDir + "/" + SNPFileName,N,M);
 
-	usint m = 16384;
+	usint m = 1 << 18;
 
 	usint init_size = 4;
 	usint dcrtBits = 54;

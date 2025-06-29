@@ -108,6 +108,14 @@ def build_and_install_polycircuit(args: argparse.Namespace) -> None:
                 except FileNotFoundError:
                     print_info(f"Warning: Replacement file {replacement_file_name} not found.")
                     print_info("Skipping CMakeLists.txt replacement.")
+            elif "cifar10" in replacement_file_name:
+                target_dir_path = os.path.join(polycircuit_repo_dir, "examples", "CIFAR10Usage")
+                try:
+                    print_info(f"Copying {replacement_file_name} to {target_dir_path}...")
+                    shutil.copy2(os.path.join(replacement_files_dir, replacement_file_dir_name, replacement_file_name), target_dir_path)
+                except FileNotFoundError:
+                    print_info(f"Warning: Replacement file {replacement_file_name} not found.")
+                    print_info("Skipping CMakeLists.txt replacement.")
         
     print_info(f"Building and installing polycircuit to {polycircuit_install_dir}...")
     polycircuit_build_dir = os.path.join(polycircuit_repo_dir, "build")
@@ -275,9 +283,6 @@ def monitor_timing_and_power_microbenchmarks(args: argparse.Namespace) -> None:
         )
 
     setup = True
-    # microbenchmark_functions["matrix_multiplication"] = lambda: run_matrix_multiplication(polycircuit_binaries_path, serialized_files_path, "32", args, setup)
-    # microbenchmark_functions["sign_eval"] = lambda: run_sign_eval(polycircuit_binaries_path, serialized_files_path, args, setup)
-    # microbenchmark_functions["logistic_function"] = lambda: run_logistic_function(polycircuit_binaries_path, serialized_files_path, args, setup)
     
     for microbenchmark in script_globals.microbenchmarks:
         if microbenchmark not in microbenchmark_functions:
@@ -290,7 +295,7 @@ def monitor_timing_and_power_microbenchmarks(args: argparse.Namespace) -> None:
         microbenchmark_functions[microbenchmark]()
         perf_utils.stop_perf(perf_proc)
         
-        # Run a separatePython script to parse timing and power data
+        # Run a separate Python script to parse timing and power data
         python_parsed_output = subprocess.check_output(["python3", utils.get_absolute_path("util/parse_microbench_and_power.py")]).decode()
 
         execution_time = utils.extract_float_value(python_parsed_output, "Average Time")

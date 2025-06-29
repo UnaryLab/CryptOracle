@@ -20,7 +20,6 @@
 #       echo -1 | sudo tee /proc/sys/kernel/perf_event_paranoid && echo "kernel.perf_event_paranoid = -1" | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 #   Python dependencies:
 #       - Python 3.x
-#       - PyTorch
 #       - Pandas: For data manipulation and analysis
 #       - Numpy: For numerical computations
 #       - Matplotlib: For generating plots
@@ -31,7 +30,6 @@
 #
 # Further OpenFHE Documentation: https://openfhe-development.readthedocs.io/en/latest/index.html
 #
-# Authors: Cory.Brynds@ucf.edu and Parker.McLeod@ucf.edu
 
 from datetime import datetime
 from src.cli import process_cli_arguments, print_args

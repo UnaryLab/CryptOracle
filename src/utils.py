@@ -39,8 +39,7 @@ def configure_multithreading(args: argparse.Namespace) -> bool:
         args.num_threads = multiprocessing.cpu_count()
 
     os.environ["OMP_NUM_THREADS"] = str(args.num_threads)
-    # return args.num_threads != 1  # Return True if OpenMP should be enabled
-    return True # TODO: Compare OpenMP disabled vs enabled with a single thread
+    return True
 
 
 def delete_old_files() -> None:

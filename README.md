@@ -7,8 +7,7 @@ This repository aims to be a standarizing benchmark framework for Homomorphic En
 ### Clone the Repository  
 
 ```bash
-git clone https://github.com/ParkerCMcLeod/unary-openfhe-benchmarking.git
-cd unary-openfhe-benchmarking
+# TODO: ANON REMOVAL
 ```
 
 ## Features  
@@ -70,8 +69,7 @@ export LD_LIBRARY_PATH=path/to/cloned/repository/openfhe-development-install/lib
 For persistence across terminal sessions, add this line to your `~/.bashrc` or `~/.profile` file:
 
 ```bash
-echo 'export LD_LIBRARY_PATH="$HOME/path/to/unary-openfhe-benchmarking/openfhe-development-install/lib:$LD_LIBRARY_PATH"' >> ~/.bashrc
-source ~/.bashrc
+# TODO: ANON REMOVAL
 ```
 
 ## Python Dependencies  
@@ -94,7 +92,7 @@ source ~/.bashrc
 ### Installation of Python Dependencies  
 
 ```bash
-pip3 install torch pandas numpy matplotlib pyyaml
+pip3 install pandas numpy matplotlib pyyaml
 ```
 
 ## Running Microbenchmarks  
@@ -149,4 +147,7 @@ python3 benchmark.py \
 ## Authors  
 - Anonymous until conference submission results announced
 
-## License  
+## License
+
+This project is licensed under the MIT License – see the [LICENSE](./LICENSE) file for details.  
+Licenses for all third-party dependencies are inherited.

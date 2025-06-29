@@ -26,10 +26,11 @@
 #       - CSV: For writing to CSV files
 #       - Random: For shuffling training data
 #   Install commands (Python):
-#       pip3 install torch pandas numpy matplotlib
+#       pip3 install pandas numpy matplotlib
 #
 # Further OpenFHE Documentation: https://openfhe-development.readthedocs.io/en/latest/index.html
 #
+# TODO: ANON REMOVAL
 
 from datetime import datetime
 from src.cli import process_cli_arguments, print_args

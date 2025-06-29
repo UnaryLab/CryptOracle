@@ -4,6 +4,7 @@
  * See the LICENSE.md file for the full text of the license.
  * If you share the Licensed Material (including in modified form) you must include the above attribution in the copy you share.
  ***/
+
 /*
 
 Implementation for the Chi-Square GWAS solution described in
@@ -59,8 +60,7 @@ int main(int argc, char **argv) {
 
 	static struct option long_options[] =
 	  {
-		/* These options dont set a flag.
-		   We distinguish them by their indices. */
+		/* These options dont set a flag. We distinguish them by their indices. */
 		{"SNPdir",  	required_argument, 			0, 'S'},
 		{"SNPfilename",  	required_argument, 			0, 's'},
 		{"pvalue",  	required_argument, 			0, 'p'},

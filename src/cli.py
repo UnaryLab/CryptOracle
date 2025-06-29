@@ -1,6 +1,7 @@
 import argparse
 import os
 import src.logging_utils as log
+import sys
 from src.globals import script_globals
 
 def process_cli_arguments() -> argparse.Namespace:

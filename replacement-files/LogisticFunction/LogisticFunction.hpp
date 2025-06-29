@@ -58,7 +58,7 @@ public:
         lbcrypto::Ciphertext<ElementType> outputC = m_cc->EvalChebyshevSeries(m_inputC, coeffVal, -25, 25);
 
         std::vector<lbcrypto::Ciphertext<ElementType>> t1(15);
-        t1[0] = m_inputC;                       // 0
+        t1[0] = m_inputC; // 0
         t1[1] = m_cc->EvalMult(m_inputC, 0.04); // 1
         // T2=2x^2-1
         lbcrypto::Ciphertext<ElementType> prod;
@@ -150,7 +150,7 @@ public:
         // T61
         for (int i = 0; i < 1; i++)
         {
-            coeff = coeffVal3[2 + i]; //-coeffVal3[8+i];
+            coeff = coeffVal3[2 + i]; // -coeffVal3[8+i];
             temp1 = m_cc->EvalMult(m_cc->EvalMult(t[1 + i], coeff * 16), t[4]);
             temp2 = m_cc->EvalMult(t[3 - i], coeff * 8);
             temp1 = m_cc->EvalSub(temp1, temp2);

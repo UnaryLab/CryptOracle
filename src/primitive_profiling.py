@@ -5,7 +5,6 @@ from typing import List
 import src.utils as utils
 from src.logging_utils import print_info, print_error, print_status, print_section_header
 import src.performance_utils as perf_utils
-import csv
 import re
 import shutil
 from src.globals import script_globals

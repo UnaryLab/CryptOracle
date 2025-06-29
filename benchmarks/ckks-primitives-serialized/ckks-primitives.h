@@ -85,10 +85,10 @@ class BenchmarkRunner {
     std::filesystem::path currentPath = std::filesystem::current_path();
     const std::string DATAFOLDER = currentPath.string() + "/util/cryptocontext-generator/serialized-files";
     std::string ccLocation       = "/cryptocontext.txt";
-    std::string pubKeyLocation   = "/key_pub.txt";   // Pub key
-    std::string multKeyLocation  = "/key_mult.txt";  // relinearization key
-    std::string rotKeyLocation   = "/key_rot.txt";   // automorphism / rotation key
-    std::string bootstrapKeyLocation   = "/key_bootstrap.txt";   // automorphism / rotation key
+    std::string pubKeyLocation   = "/key_pub.txt"; // Pub key
+    std::string multKeyLocation  = "/key_mult.txt"; // relinearization key
+    std::string rotKeyLocation   = "/key_rot.txt"; // automorphism / rotation key
+    std::string bootstrapKeyLocation   = "/key_bootstrap.txt"; // automorphism / rotation key
 
     // Save-load locations for RAW ciphertexts
     std::string cipherOneLocation = "/a_input_ciphertext.txt";
@@ -139,4 +139,4 @@ class BenchmarkRunner {
     std::string to_lower(const std::string& str) const;
 };
 
-#endif  // CKKS_MICROBENCH_RUNNER_H
+#endif // CKKS_MICROBENCH_RUNNER_H

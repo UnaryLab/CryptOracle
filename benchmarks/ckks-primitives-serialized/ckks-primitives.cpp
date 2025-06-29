@@ -536,8 +536,8 @@ void BenchmarkRunner::CKKS_Bootstrap() {
 
 // Function to compute the base-2 logarithm of a large integer represented as a string.
 int BenchmarkRunner::log2IntAsString(const std::string& num) const {
-    std::string temp = num;  // Make a copy of the input to work with.
-    int log2 = 0;            // This will store the logarithm value.
+    std::string temp = num; // Make a copy of the input to work with.
+    int log2 = 0; // This will store the logarithm value.
 
     // Keep dividing the number by 2 until it becomes 1.
     // Increment the log2 counter for each division.
@@ -556,8 +556,8 @@ std::string BenchmarkRunner::divideStringBy2(const std::string& num) const {
         return "0";
     }
 
-    std::string result;  // This will store the result of division.
-    int carryOver = 0;   // This holds the remainder that is carried over to the next digit.
+    std::string result; // This will store the result of division.
+    int carryOver = 0; // This holds the remainder that is carried over to the next digit.
 
     for (char digitChar : num) {
         // Convert the current character to an integer and add the carry from the previous division.

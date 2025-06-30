@@ -158,7 +158,7 @@ def build_and_install_polycircuit(args: argparse.Namespace) -> None:
         subprocess.run(
             [
                 "cmake",
-                f"-DCMAKE_PREFIX_PATH={polycircuit_install_dir};{openfhe_install_dir}",
+                f"-DCMAKE_PREFIX_PATH=\"{polycircuit_install_dir};{openfhe_install_dir}\"",
                 ".."
             ],
             cwd=examples_build_dir,

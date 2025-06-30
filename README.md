@@ -55,7 +55,7 @@ sudo sysctl -p
 ```bash
 sudo apt-get update -y && sudo apt-get upgrade -y
 sudo apt install -y git cmake autoconf build-essential libtool \
-  libgoogle-perftools-dev python3-dev python3-pip \
+  libgoogle-perftools-dev python3-dev python3-pip libboost-all-dev \
   linux-tools-$(uname -r) linux-tools-common linux-tools-generic
 ```
 

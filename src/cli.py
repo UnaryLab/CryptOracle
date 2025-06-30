@@ -53,6 +53,8 @@ def process_cli_arguments() -> argparse.Namespace:
     parser.add_argument(
         "-p",
         "--run-primitives",
+        nargs="?",
+        const=True,
         type=is_boolean,
         default=False,
         help="Toggle running primitive analysis",
@@ -60,6 +62,8 @@ def process_cli_arguments() -> argparse.Namespace:
     parser.add_argument(
         "-k",
         "--run-microbenchmarks",
+        nargs="?",
+        const=True,
         type=is_boolean,
         default=False,
         help="Toggle running microbenchmarks",
@@ -67,6 +71,8 @@ def process_cli_arguments() -> argparse.Namespace:
     parser.add_argument(
         "-w",
         "--run-workloads",
+        nargs="?",
+        const=True,
         type=is_boolean,
         default=False,
         help="Toggle running workloads",
@@ -74,6 +80,8 @@ def process_cli_arguments() -> argparse.Namespace:
     parser.add_argument(
         "-l",
         "--power-latency-analysis",
+        nargs="?",
+        const=True,
         type=is_boolean,
         default=True,
         help="Toggle running latency and power data",
@@ -81,6 +89,8 @@ def process_cli_arguments() -> argparse.Namespace:
     parser.add_argument(
         "-r",
         "--runtime-analysis",
+        nargs="?",
+        const=True,
         type=is_boolean,
         default=True,
         help="Toggle runtime analysis",
@@ -88,18 +98,24 @@ def process_cli_arguments() -> argparse.Namespace:
     parser.add_argument(
         "-f",
         "--flamegraph-generation",
+        nargs="?",
+        const=True,
         type=is_boolean,
         default=False,
         help="Toggle FlameGraph generation",
     )
     parser.add_argument(
         "--build",
+        nargs="?",
+        const=True,
         type=is_boolean,
         default=True,
         help="Toggle build/rebuild (including checks)",
     )
     parser.add_argument(
         "--compiler-optimizations",
+        nargs="?",
+        const=True,
         type=is_boolean,
         default=True,
         help="Toggle compiler optimizations",
@@ -107,6 +123,8 @@ def process_cli_arguments() -> argparse.Namespace:
     parser.add_argument(
         "-e",
         "--cold-caching",
+        nargs="?",
+        const=True,
         type=is_boolean,
         default=True,
         help="Toggle cold-caching during primitive profiling",
@@ -121,12 +139,16 @@ def process_cli_arguments() -> argparse.Namespace:
     parser.add_argument(
         "-g",
         "--run-group",
+        nargs="?",
+        const=True,
         type=is_boolean,
         default=False,
         help="Run a group of benchmarks based on the input .yaml file",
     ) 
     parser.add_argument(
         "--fhe",
+        nargs="?",
+        const=True,
         type=is_boolean,
         default=False,
         help="Enable FHE mode (True required for bootstrapping primitive)",

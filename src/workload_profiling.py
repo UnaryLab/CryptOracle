@@ -160,7 +160,7 @@ def build_low_memory_resnet20(args: argparse.Namespace) -> None:
     os.makedirs(build_dir, exist_ok=True)
 
     # Patch crypto parameters BEFORE building
-    patch_resnet_params(base_dir)
+    # patch_resnet_params(base_dir)
 
     subprocess.run(['cmake', '-B', build_dir, '-S', base_dir], 
                   check=True,
@@ -677,4 +677,18 @@ def workload_generate_flamegraph(args: argparse.Namespace) -> None:
     for workload in script_globals.workloads:
         print_info(f"Generating FlameGraph for {workload}...")
         cwd = get_cwd_workload(workload)
-        perf_utils.generate_flamegraph(args, workload, script_globals.workload_command_dict[workload].split(), cwd)
+        command_string = script_globals.workload_command_dict[workload]
+        match workload:
+            case "logistic_regression":
+                command_string = command_string
+            case "cifar10":
+                command_string = command_string + " --setup false"
+            case "chi_square_test":
+                command_string = command_string + " --setup false"
+            case "low_memory_resnet20":
+                command_string = command_string
+            case _:
+                print_error(f"Unknown workload: {workload}")
+                return
+        
+        perf_utils.generate_flamegraph(args, workload, command_string.split(), cwd)

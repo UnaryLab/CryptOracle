@@ -88,6 +88,7 @@ def ensure_git_submodules(args: argparse.Namespace) -> None:
         "util/flamegraph": "https://github.com/brendangregg/FlameGraph.git",
         "openfhe-development": "https://github.com/openfheorg/openfhe-development.git",
     }
+    openfhe_version = "v1.2.4"
 
     for submodule, url in submodules.items():
         submodule_path = utils.get_absolute_path(submodule)
@@ -104,18 +105,21 @@ def ensure_git_submodules(args: argparse.Namespace) -> None:
             except subprocess.CalledProcessError as e:
                 log.print_info(f"Submodule not found, adding it: {submodule}")
                 try:
-                    subprocess.run(
-                        ["git", "submodule", "add", "-f", url, submodule_path],
-                        check=True,
-                        stdout=None if args.verbose else subprocess.DEVNULL,
-                        stderr=subprocess.PIPE,
-                    )
-                    subprocess.run(
-                        ["git", "submodule", "update", "--init", "--recursive", submodule_path],
-                        check=True,
-                        stdout=None if args.verbose else subprocess.DEVNULL,
-                        stderr=subprocess.PIPE,
-                    )
+                    # Add submodule - only openfhe-development gets specific version
+                    if submodule == "openfhe-development":
+                        subprocess.run(
+                            ["git", "submodule", "add", "-b", openfhe_version, url, submodule_path],
+                            check=True,
+                            stdout=None if args.verbose else subprocess.DEVNULL,
+                            stderr=subprocess.PIPE,
+                        )
+                    else:
+                        subprocess.run(
+                            ["git", "submodule", "add", url, submodule_path],
+                            check=True,
+                            stdout=None if args.verbose else subprocess.DEVNULL,
+                            stderr=subprocess.PIPE,
+                        )
                     log.print_info(f"Submodule {submodule} added and initialized successfully.")
                 except subprocess.CalledProcessError as e:
                     log.print_error(f"Failed to add submodule {submodule}: {e.stderr.decode().strip()}")
@@ -128,6 +132,22 @@ def ensure_git_submodules(args: argparse.Namespace) -> None:
                     stdout=None if args.verbose else subprocess.DEVNULL,
                     stderr=subprocess.PIPE,
                 )
+                
+                # For openfhe-development, ensure it's on the correct version
+                if submodule == "openfhe-development":
+                    log.print_info(f"Ensuring {submodule} is on version {openfhe_version}")
+                    try:
+                        # Change to submodule directory and checkout the specific version
+                        subprocess.run(
+                            ["git", "-C", submodule_path, "checkout", openfhe_version],
+                            check=True,
+                            stdout=None if args.verbose else subprocess.DEVNULL,
+                            stderr=subprocess.PIPE,
+                        )
+                        log.print_info(f"Submodule {submodule} checked out to {openfhe_version} successfully.")
+                    except subprocess.CalledProcessError as e:
+                        log.print_error(f"Failed to checkout {openfhe_version} for submodule {submodule}: {e.stderr.decode().strip()}")
+                
                 log.print_info(f"Submodule {submodule} updated successfully.")
             except subprocess.CalledProcessError as e:
                 log.print_error(f"Failed to update submodule {submodule}: {e.stderr.decode().strip()}")

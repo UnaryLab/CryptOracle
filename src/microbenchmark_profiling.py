@@ -462,7 +462,16 @@ def microbenchmark_save_csv(args: argparse.Namespace) -> None:
          
 def microbenchmark_generate_flamegraph(args: argparse.Namespace) -> None:
     cwd = utils.get_project_root()
+    
     for microbenchmark in script_globals.microbenchmarks:
         print_info(f"Generating FlameGraph for {microbenchmark}...")
-        perf_utils.generate_flamegraph(args, microbenchmark, script_globals.microbenchmark_command_dict[microbenchmark].split(), cwd)
+        command_string = script_globals.microbenchmark_command_dict[microbenchmark]
+        match microbenchmark:
+            case "matrix_multiplication":
+                command_string = command_string + " --setup false"
+            case "sign_eval":
+                command_string = command_string + " --setup false"
+            case "logistic_function":
+                command_string = command_string + " --setup false"
+        perf_utils.generate_flamegraph(args, microbenchmark, command_string.split(), cwd)
     

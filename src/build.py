@@ -24,26 +24,6 @@ def build_and_install_openfhe(args: argparse.Namespace) -> None:
         os.chdir(script_globals.script_dir)
     except OSError as e:
         log.print_error(f"Failed to re-enter root directory: {str(e)}")
-        
-def build_clear_cache_program(args: argparse.Namespace) -> None:
-    """Handles the building and installation process for the clear cache program."""
-    clear_cache_dir = utils.get_absolute_path(os.path.join("benchmarks", "ckks-primitives", "clear-cache"))
-    if not os.path.exists(clear_cache_dir):
-        log.print_error(f"Clear cache program directory not found at: {clear_cache_dir}")
-        return
-        
-    build_dir = os.path.join(clear_cache_dir, "build")
-    os.makedirs(build_dir, exist_ok=True)
-    
-    result = subprocess.run(
-        ["make", f"-j{script_globals.cpu_count}"],
-        cwd=build_dir,
-        stdout=None if args.verbose else subprocess.DEVNULL,
-        stderr=subprocess.PIPE,
-    )
-    if result.returncode != 0:
-        print(result.stderr.decode())
-        log.print_error("Make for clear cache program failed")
 
 
 def initialize_cmake_opts(args: argparse.Namespace) -> None:

@@ -64,21 +64,9 @@ sudo apt install -y git cmake autoconf build-essential libtool \
 If you encounter "error while loading shared libraries" when running the benchmarks, you may need to set the `LD_LIBRARY_PATH` environment variable to include the OpenFHE library installation directory:
 
 ```bash
-# Absolute path to openfhe-development-install/lib (works even if it doesn't exist yet)
-LIB_DIR="$(pwd)/openfhe-development-install/lib"
-
-# Export for this shell session
-export LD_LIBRARY_PATH="$LIB_DIR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-
-# Persist to ~/.bashrc if not already there
-grep -qxF "export LD_LIBRARY_PATH=\"$LIB_DIR:\$LD_LIBRARY_PATH\"" ~/.bashrc ||
-    echo "export LD_LIBRARY_PATH=\"$LIB_DIR:\$LD_LIBRARY_PATH\"" >> ~/.bashrc
-```
-
-For persistence across terminal sessions, add this line to your `~/.bashrc` or `~/.profile` file:
-
-```bash
-# TODO: ANON REMOVAL
+LIB_DIR="$(pwd)/openfhe-development-install/lib" # Absolute path to openfhe-development-install/lib (works even if it doesn't exist yet)
+export LD_LIBRARY_PATH="$LIB_DIR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" # Export for this shell session
+grep -qxF "export LD_LIBRARY_PATH=\"$LIB_DIR:\$LD_LIBRARY_PATH\"" ~/.bashrc || echo "export LD_LIBRARY_PATH=\"$LIB_DIR:\$LD_LIBRARY_PATH\"" >> ~/.bashrc # Persist to ~/.bashrc if not already there
 ```
 
 ## Python Dependencies  
@@ -100,12 +88,10 @@ For persistence across terminal sessions, add this line to your `~/.bashrc` or `
 ### Installation of Python Dependencies  
 
 ```bash
-# Create the venv 
-python3 -m venv .venv
-# Activate venv
-source .venv/bin/activate
-# Update and install pip deps
-pip install --upgrade pip
+sudo apt install python3.12-venv -y # install python3.12 venv
+python3 -m venv .venv # Create the venv 
+source .venv/bin/activate # Activate venv
+pip install --upgrade pip # Update and install pip deps
 pip install \
     psutil \
     py-cpuinfo \
@@ -167,7 +153,7 @@ python3 benchmark-main.py \
 - **OpenFHE Documentation**: [OpenFHE Docs](https://openfhe-development.readthedocs.io/en/latest/index.html)
 
 ## Authors  
-- Anonymous until conference submission results announced
+- Anonymous until conference submission results announced # TODO: ANON REMOVAL
 
 ## License
 

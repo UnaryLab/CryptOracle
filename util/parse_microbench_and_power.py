@@ -34,5 +34,5 @@ average_time = time_values[-1] if time_values else 0  # Using the last time valu
 total_energy = sum(energy_values) if energy_values else 0  # Summing the energy values
 
 # Output the results
-print(f"\Average Time: {average_time:.6f} seconds")
+print(f"\nAverage Time: {average_time:.6f} seconds")
 print(f"Total Energy Usage: {total_energy:.2f} Joules\n")

@@ -154,7 +154,13 @@ def process_cli_arguments() -> argparse.Namespace:
         help="Enable FHE mode (True required for bootstrapping primitive)",
     )
     parser.add_argument(
-        "--verbose", action="store_true", help="Enable verbose output"
+        "-v",
+        "--verbose",
+        nargs="?",
+        const=True,
+        type=is_boolean,
+        default=False,
+        help="Enable verbose output"
     )
 
     args = parser.parse_args()

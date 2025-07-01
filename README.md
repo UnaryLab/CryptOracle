@@ -116,28 +116,34 @@ pip install --upgrade pip
 pip install psutil py-cpuinfo GPUtil dmidecode pyyaml pandas numpy matplotlib
 ```
 
-## Running Microbenchmarks
+### Using the Profiler
 
-```bash
-python3 benchmark-main.py --power-latency-analysis True \
-                          --runtime-analysis True \
-                          --build True
-```
-
-## Complete CLI Example (with defaults)
-
+### Example CLI arguments for primitive profiling
 ```bash
 python3 benchmark-main.py \
   -s none \
   -n 13 \
   -b 12 \
-  --depth 5 \
+  --depth 10 \
   --num-threads 0 \
   --compiler-optimizations True \
   --build True \
   --run-primitives True \
   --csv-name test \
-  --verbose
+```
+
+### Example CLI arguments for microbenchmark profiling
+```bash
+python3 benchmark-main.py \
+  -s none \
+  -n 13 \
+  -b 12 \
+  --depth 10 \
+  --num-threads 0 \
+  --compiler-optimizations True \
+  --build True \
+  --run-microbenchmarks True \
+  --csv-name test \
 ```
 
 ## CLI Argument Reference

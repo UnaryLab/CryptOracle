@@ -140,7 +140,7 @@ def run_benchmark(args: argparse.Namespace, params: Dict[str, Any], project_root
         "--run-microbenchmarks", str(args.run_microbenchmarks),
         "--run-workloads", str(args.run_workloads), # Workloads do not use context generator, only need to run each workload on first parameter combination
         "--csv-name", str(args.csv_name),
-        "--runtime-analysis", str(args.event_profiling),
+        "--event-profiling", str(args.event_profiling),
         "--fhe", str(args.fhe)
     ]
 

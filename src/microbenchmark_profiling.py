@@ -18,17 +18,17 @@ def analyze_microbenchmark_performance(args: argparse.Namespace) -> None:
         print_status("Building microbenchmark benchmarking application...")
         build_and_install_polycircuit(args)
 
-    if args.power_latency_analysis:
-        power_latency_analysis_start = datetime.now()
-        print_status("Performing latency and power analysis for microbenchmarks...")
-        monitor_timing_and_power_microbenchmarks(args)
-        power_latency_analysis_end = datetime.now()
-        print_timestamp(f"Microbenchmark runtime analysis completed in {(power_latency_analysis_end - power_latency_analysis_start).total_seconds():.3f} seconds.")
-        
     if args.runtime_analysis:
+        runtime_analysis_start = datetime.now()
         print_status("Performing runtime analysis for microbenchmarks...")
+        runtime_analysis_microbenchmarks(args)
+        runtime_analysis_end = datetime.now()
+        print_timestamp(f"Microbenchmark runtime analysis completed in {(runtime_analysis_end - runtime_analysis_start).total_seconds():.3f} seconds.")
+        
+    if args.event_profiling:
+        print_status("Performing event profiling for microbenchmarks...")
         event_profiling_start = datetime.now()
-        microbenchmark_runtime_analysis(args)
+        microbenchmark_event_profiling(args)
         event_profiling_end = datetime.now()
         print_timestamp(f"Microbenchmark event profiling completed in {(event_profiling_end - event_profiling_start).total_seconds():.3f} seconds.")
     
@@ -235,8 +235,7 @@ def run_logistic_function(polycircuit_binaries_path: str, serialized_files_path:
     execute_polycircuit_command(cmd, args)
 
 
-def monitor_timing_and_power_microbenchmarks(args: argparse.Namespace) -> None:
-    """Monitors execution time, energy, and power usage for Polycircuit microbenchmarks."""
+def runtime_analysis_microbenchmarks(args: argparse.Namespace) -> None:
     polycircuit_binaries_path = utils.get_absolute_path("benchmarks/polycircuit/examples")
     serialized_files_path = utils.get_absolute_path("util/cryptocontext-generator/serialized-files")
     input_image_path = utils.get_absolute_path("benchmarks/polycircuit/examples/CIFAR10Usage/class-1.txt")
@@ -311,7 +310,7 @@ def monitor_timing_and_power_microbenchmarks(args: argparse.Namespace) -> None:
     
     calculate_timings_and_energies_microbenchmarks()
     
-    print_section_header("Timing and power results for microbenchmarks")
+    print_section_header("Runtime analysis results for microbenchmarks")
     for microbenchmark in microbenchmark_functions.keys():
         if microbenchmark in script_globals.microbenchmarks:
             print_info(f"{microbenchmark}:")
@@ -371,8 +370,7 @@ def generate_command_dict(polycircuit_binaries_path: str, serialized_files_path:
     return commands
 
     
-def microbenchmark_runtime_analysis(args: argparse.Namespace) -> None:
-    """Runs runtime analysis for microbenchmarks."""
+def microbenchmark_event_profiling(args: argparse.Namespace) -> None:
     polycircuit_binaries_path = utils.get_absolute_path("benchmarks/polycircuit/examples")
     serialized_files_path = utils.get_absolute_path("util/cryptocontext-generator/serialized-files")
     input_image_path = utils.get_absolute_path("benchmarks/polycircuit/examples/CIFAR10Usage/class-1.txt")
@@ -397,13 +395,12 @@ def microbenchmark_runtime_analysis(args: argparse.Namespace) -> None:
             script_globals.microbenchmark_setup_and_execution_perf_results[microbenchmark], 
             script_globals.microbenchmark_perf_results[microbenchmark])
         
-    print_section_header("Runtime analysis results for microbenchmarks")
+    print_section_header("Event profiling results for microbenchmarks")
     for microbenchmark in script_globals.microbenchmarks:
         perf_utils.print_runtime_results(microbenchmark, script_globals.microbenchmark_perf_results[microbenchmark])
         
 
 def execute_runtime_profiling_microbenchmark(microbenchmark: str, command_string: str, event_string: str, args: argparse.Namespace, setup_only: bool = False) -> None:
-    """Performs runtime analysis for a single microbenchmark."""
     setup_string = "in setup mode" if setup_only else ""
     print_info(f"Running {microbenchmark} microbenchmark in {setup_string}...")
     command_string = command_string + " --setup" + (" true" if setup_only else " false")

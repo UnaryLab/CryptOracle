@@ -74,7 +74,7 @@ def compute_execution_metrics(microbenchmark: str, execution_time: float, setup_
     )
         
 def print_runtime_results(target: str, perf_results: Dict[str, float]) -> None:
-    """Prints the runtime analysis results for a single target."""
+    """Prints the event profiling results for a single target."""
     print_info(f"{target}:")
     for event in perf_results:
         event_count = perf_results.get(event, 0)
@@ -84,15 +84,14 @@ def initialize_csv_file(csv_output_file: str, target_items: List[str], args: arg
     """Initializes the CSV file with headers."""
     headers = ["Date and Time of Benchmark"] + list(script_globals.hardware_stats.keys())
 
-    # Matrix size should only be included in the csv in certain cases
     headers += [
-        "security_standard_level", "n", "batch_size", "depth", "num_threads",#"matrix_size", 
-        "power_latency_analysis", "runtime_analysis", "flamegraph_generation", "build", "compiler_optimizations", "cold_caching"
+        "security_standard_level", "n", "batch_size", "depth", "num_threads",
+        "runtime_analysis", "event_profiling", "flamegraph_generation", "build", "compiler_optimizations", "cold_caching"
     ]
 
     for target in target_items:
         headers.extend([f"{target} Time", f"{target} Energy", f"{target} Power"])
-        if args.runtime_analysis is True:
+        if args.event_profiling is True:
             headers.extend([f"{target} IPC"]
             + [
                 metric for event in script_globals.perf_events
@@ -121,7 +120,7 @@ def save_results_csv(csv_output_path: str,args: argparse.Namespace, target_items
     # Matrix size should only be included in the csv in certain cases
     csv_row += [
         args.security_standard_level, args.n, args.batch_size, args.depth, args.num_threads, #args.matrix_size,
-        args.power_latency_analysis, args.runtime_analysis, args.flamegraph_generation, args.build, args.compiler_optimizations, args.cold_caching
+        args.runtime_analysis, args.event_profiling, args.flamegraph_generation, args.build, args.compiler_optimizations, args.cold_caching
     ]
     
     for target in target_items:
@@ -129,7 +128,7 @@ def save_results_csv(csv_output_path: str,args: argparse.Namespace, target_items
         csv_row.append(execution_energies.get(target, "N/A"))
         csv_row.append(execution_powers.get(target, "N/A"))
         
-        if (args.runtime_analysis is True):
+        if (args.event_profiling is True):
             csv_row.append(perf_results[target].get("ipc", "N/A"))
             
             for event in script_globals.perf_events:

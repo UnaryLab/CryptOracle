@@ -18,13 +18,13 @@ def analyze_primitive_performance(args: argparse.Namespace) -> None:
         print_status("Building primitive benchmarking application...")
         setup_and_build_primitive_app(args)
         
-    if args.power_latency_analysis:
-        print_status("Performing latency and power analysis for primitives...")
-        monitor_timing_and_power_primitives(args)
-
     if args.runtime_analysis:
         print_status("Performing runtime analysis for primitives...")
-        runtime_analysis(args)
+        runtime_analysis_primitives(args)
+
+    if args.event_profiling:
+        print_status("Performing event profiling for primitives...")
+        event_profiling_primitives(args)
 
     primitive_save_csv(args)
     
@@ -105,8 +105,7 @@ def setup_and_build_primitive_app(args: argparse.Namespace) -> None:
         print(result.stderr.decode())
         print_error("Make for OpenFHE primitive benchmarking application failed")
 
-def monitor_timing_and_power_primitives(args: argparse.Namespace) -> None:
-    """Monitors timing and power usage during benchmark execution."""
+def runtime_analysis_primitives(args: argparse.Namespace) -> None:
     setup = False
     function_repeats = 0
 
@@ -197,22 +196,6 @@ def run_primitive(
     ]
 
     with open(output_path, "w") as output_file:
-        # if args.verbose:
-        #     perf_proc = start_perf(perf_out_path)
-        #     process = subprocess.Popen(
-        #         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, cwd=utils.get_project_root())
-        #     stop_perf(perf_proc)
-        #     for line in process.stdout:
-        #         print(line, end="")
-        #         output_file.write(line)
-
-        #     process.stdout.close()
-        #     result = process.wait()
-
-        #     if result != 0:
-        #         print(process.stderr.read())
-
-        # else:
         perf_proc = perf_utils.start_perf(perf_out_path)
         result = subprocess.run(cmd, stdout=output_file, stderr=subprocess.PIPE, cwd=utils.get_project_root())
         perf_utils.stop_perf(perf_proc)
@@ -220,8 +203,7 @@ def run_primitive(
             print(result.stderr.decode())
             print_error("CKKS primitive execution failed")
                 
-def runtime_analysis(args: argparse.Namespace) -> None:
-    """Conducts runtime analysis for CKKS microbenchmarks."""
+def event_profiling_primitives(args: argparse.Namespace) -> None:
     for event in script_globals.perf_events:
         for suffix in ["setup", "setup_and_execution", "execution", "rate", "cycle_rate"]:
             setattr(script_globals, f"{event}_{suffix}", {})
@@ -232,7 +214,7 @@ def runtime_analysis(args: argparse.Namespace) -> None:
         execute_runtime_profiling(primitive, event_string, args, setup_only=False)
         execute_runtime_profiling(primitive, event_string, args, setup_only=True)
     
-    print_section_header("Runtime analysis results for primitives")
+    print_section_header("Event profiling results for primitives")
     for primitive in args.primitives:
         compute_execution_metrics(primitive)
         perf_utils.print_runtime_results(primitive, script_globals.primitive_perf_results[primitive])

@@ -78,15 +78,6 @@ def process_cli_arguments() -> argparse.Namespace:
         help="Toggle running workloads",
     )
     parser.add_argument(
-        "-l",
-        "--power-latency-analysis",
-        nargs="?",
-        const=True,
-        type=is_boolean,
-        default=True,
-        help="Toggle running latency and power data",
-    )
-    parser.add_argument(
         "-r",
         "--runtime-analysis",
         nargs="?",
@@ -94,6 +85,15 @@ def process_cli_arguments() -> argparse.Namespace:
         type=is_boolean,
         default=True,
         help="Toggle runtime analysis",
+    )
+    parser.add_argument(
+        "-e",
+        "--event-profiling",
+        nargs="?",
+        const=True,
+        type=is_boolean,
+        default=True,
+        help="Toggle event profiling",
     )
     parser.add_argument(
         "-f",
@@ -121,7 +121,6 @@ def process_cli_arguments() -> argparse.Namespace:
         help="Toggle compiler optimizations",
     )
     parser.add_argument(
-        "-e",
         "--cold-caching",
         nargs="?",
         const=True,
@@ -181,8 +180,8 @@ def print_args(args: argparse.Namespace):
     log.print_argument("Primitive Profiling:", str(args.run_primitives))
     log.print_argument("Microbenchmark Profiling:", str(args.run_microbenchmarks))
     log.print_argument("Workload Profiling:", str(args.run_workloads))
-    log.print_argument("Power and Latency Analysis:", str(args.power_latency_analysis))
     log.print_argument("Runtime Analysis:", str(args.runtime_analysis))
+    log.print_argument("Event Profiling:", str(args.event_profiling))
     log.print_argument("FlameGraph Generation:", str(args.flamegraph_generation))
     log.print_argument("Build:", str(args.build))
     log.print_argument("Compiler Optimizations:", str(args.compiler_optimizations))

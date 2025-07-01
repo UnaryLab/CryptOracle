@@ -105,19 +105,19 @@ def analyze_workload_performance(args: argparse.Namespace) -> None:
         print_status("Building workload benchmarking application...")
         build_workloads(args)
 
-    if args.power_latency_analysis:
-        print_status("Performing latency and power analysis for workloads...")
-        power_latency_start = datetime.now()
-        monitor_timing_and_power_workloads(args)
-        power_latency_end = datetime.now()
-        print_timestamp(f"Power and latency analysis completed in {(power_latency_end - power_latency_start).total_seconds():.3f} seconds.")
-        
     if args.runtime_analysis:
         print_status("Performing runtime analysis for workloads...")
+        runtime_analysis_start = datetime.now()
+        runtime_analysis_workloads(args)
+        runtime_analysis_end = datetime.now()
+        print_timestamp(f"Runtime analysis completed in {(runtime_analysis_end - runtime_analysis_start).total_seconds():.3f} seconds.")
+        
+    if args.event_profiling:
+        print_status("Performing event profiling for workloads...")
         event_profiling_start = datetime.now()
-        workload_runtime_analysis(args)
+        workload_event_profiling(args)
         event_profiling_end = datetime.now()
-        print_timestamp(f"Runtime analysis completed in {(event_profiling_end - event_profiling_start).total_seconds():.3f} seconds.")
+        print_timestamp(f"Event profiling completed in {(event_profiling_end - event_profiling_start).total_seconds():.3f} seconds.")
     
     workload_save_csv(args)
     
@@ -386,10 +386,8 @@ def run_chi_square_test(args: argparse.Namespace, setup: bool = False) -> None:
         print(result.stderr.decode())
         print_error("Chi-Square Test workload failed to run")
 
-def monitor_timing_and_power_workloads(args: argparse.Namespace) -> None:
-    """Monitors execution time, energy, and power usage for workloads."""
-    
-    print_info("Performing latency and power analysis for workloads...")
+def runtime_analysis_workloads(args: argparse.Namespace) -> None:
+    print_info("Performing runtime analysis for workloads...")
 
     perf_out_path = utils.get_absolute_path("out/temp/perf_out.perf")
     
@@ -526,8 +524,8 @@ def generate_command_dict(workload_dir_path: str, args: argparse.Namespace) -> D
 
     return commands
 
-def workload_runtime_analysis(args: argparse.Namespace) -> None:
-    """Runs runtime analysis for workloads."""
+def workload_event_profiling(args: argparse.Namespace) -> None:
+    """Runs event profiling for workloads."""
     workload_dir_path = utils.get_absolute_path("benchmarks")
     
     build_dirs = {
@@ -558,13 +556,13 @@ def workload_runtime_analysis(args: argparse.Namespace) -> None:
             script_globals.workload_setup_and_execution_perf_results[workload], 
             script_globals.workload_perf_results[workload])
         
-    print_section_header("Runtime analysis results for workloads")
+    print_section_header("Event profiling results for workloads")
     for workload in script_globals.workloads:
         perf_utils.print_runtime_results(workload, script_globals.workload_perf_results[workload])
     
 
 def execute_runtime_profiling_workload(workload: str, binary_dir_path: str, command_string: str, event_string: str, args: argparse.Namespace, setup_only: bool = False) -> None:
-    """Performs runtime analysis for a single workload."""
+    """Performs event profiling for a single workload."""
     setup_string = "in setup mode" if setup_only else ""
     print_info(f"Running {workload} workload in {setup_string}...")
     

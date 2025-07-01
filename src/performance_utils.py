@@ -120,7 +120,7 @@ def save_results_csv(csv_output_path: str,args: argparse.Namespace, target_items
 
     # Matrix size should only be included in the csv in certain cases
     csv_row += [
-        args.security_standard_level, args.n, args.batch_size, args.depth, args.num_threads, #args.matrix_size,
+        args.security_standard_level, args.ring_dimension, args.batch_size, args.depth, args.num_threads, #args.matrix_size,
         args.power_latency_analysis, args.runtime_analysis, args.flamegraph_generation, args.build, args.compiler_optimizations, args.cold_caching
     ]
     

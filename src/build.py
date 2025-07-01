@@ -127,7 +127,7 @@ def generate_serialized_files(args: argparse.Namespace) -> None:
         log.print_error(f"Error building the application: {e}")
         return False
     
-    app_cmd = ["./build/file_generator", str(args.security_standard_level), str(args.n), str(args.batch_size), str(args.depth), str(args.fhe)]
+    app_cmd = ["./build/file_generator", str(args.security_standard_level), str(args.ring_dimension), str(args.batch_size), str(args.depth), str(args.fhe)]
     result = subprocess.run(app_cmd, 
                     cwd=cryptocontext_dir, 
                     check=True,

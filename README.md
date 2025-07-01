@@ -11,12 +11,12 @@ CryptoOracle is composed of three tightly-integrated pillars:
 | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Benchmark Suite**   | A top-down collection spanning<br>• **Workloads** - e.g., Logistic Regression, ResNet-20 image classification<br>• **Microbenchmarks** - optimized kernels frequently found in ML pipelines<br>• **Primitives** - semantically atomic operations such as ciphertext-ciphertext multiplication and rotations |
 | **Hardware Profiler** | One-command harness that captures runtime, micro-architectural counters, and power/energy on AMD & Intel CPUs under either standard or user-supplied security parameters                                                                                                                            |
-| **Predictive Model**  | Lightweight additive (and optional ML-based) models that extrapolate primitive-level measurements to full-workload runtime and energy with single-digit-percentage error, enabling rapid design-space exploration                                                                                   |
+| **Predictive Model**  | Lightweight additive models that extrapolate primitive-level measurements to full-workload runtime and energy with single-digit-percentage error, enabling rapid design-space exploration                                                                                   |
 
 #### Key Highlights  
 
 * 📊 **Reproducible evaluation** across workloads, parameter sets, and hardware vendors  
-* ⚡ **Fast design-space exploration** via predictive models (−7 % - +8 % runtime error; −10 % - +16 % energy error)  
+* ⚡ **Fast design-space exploration** via predictive models
 * 🛠️ **Extensible backend support** - current release targets CPUs with OpenFHE; GPU back-ends and additional FHE libraries are on the roadmap  
 * 🔍 **Rich metadata logging** - all security, algorithmic, and hardware settings plus raw and modeled results are stored in JSON/CSV for downstream analysis  
 * 🤝 **Community-driven** - contributions of new benchmarks, hardware targets, and modeling techniques are welcome  
@@ -34,7 +34,7 @@ CryptoOracle serves as a shared platform to accelerate collaborative progress in
 ## Features
 
 * **Benchmarking**: Analyze latency, power consumption, and throughput for FHE primitives, microbenchmarks, and end-to-end workloads.
-* **Performance Profiling**: Generate FlameGraphs and conduct runtime analysis using `perf` tools.
+* **Performance Profiling**: Generate FlameGraphs and conduct runtime analysis and event profiling using `perf` tools.
 * **Predictive Modeling**: Rapidly explore configuration spaces with additive or ML-based runtime and energy models.
 * **Configurable Parameters**: Fine-tune CKKS encryption parameters (security standard, ring dimension, depth, batch size, and OpenMP thread count) via intuitive CLI arguments.
 
@@ -78,22 +78,36 @@ sudo sysctl -p
 
 ```bash
 sudo apt-get update -y && sudo apt-get upgrade -y
-sudo apt install -y git cmake autoconf build-essential libtool \
+sudo apt install -y git cmake ninja-build autoconf build-essential libtool \
   libgoogle-perftools-dev python3-dev python3-pip libboost-all-dev \
   linux-tools-$(uname -r) linux-tools-common linux-tools-generic
 ```
 
-### Library Path Configuration
+### Library Path Configuration + Use Ninja Builds
 
 If you encounter “error while loading shared libraries” when running the benchmarks, export the OpenFHE installation path:
 
 ```bash
+# ── Runtime exports ───────────────────────────────────────────────
 LIB_DIR="$(pwd)/openfhe-development-install/lib"
 export LD_LIBRARY_PATH="$LIB_DIR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
-# Persist to ~/.bashrc if not already present
+# Always ask CMake for a Ninja build unless the user passes -G …
+export CMAKE_GENERATOR=Ninja
+
+# Suppress CMake’s auto-reconfigure step; you’ll re-run cmake manually
+export CMAKE_SUPPRESS_REGENERATION=TRUE
+
+# ── Persist to ~/.bashrc if these lines are not present ───────────
 grep -qxF "export LD_LIBRARY_PATH=\"$LIB_DIR:\$LD_LIBRARY_PATH\"" ~/.bashrc || \
   echo "export LD_LIBRARY_PATH=\"$LIB_DIR:\$LD_LIBRARY_PATH\"" >> ~/.bashrc
+
+grep -qxF 'export CMAKE_GENERATOR=Ninja' ~/.bashrc || \
+  echo 'export CMAKE_GENERATOR=Ninja' >> ~/.bashrc
+
+grep -qxF 'export CMAKE_SUPPRESS_REGENERATION=TRUE' ~/.bashrc || \
+  echo 'export CMAKE_SUPPRESS_REGENERATION=TRUE' >> ~/.bashrc
+
 ```
 
 ## Python Dependencies
@@ -116,28 +130,50 @@ pip install --upgrade pip
 pip install psutil py-cpuinfo GPUtil dmidecode pyyaml pandas numpy matplotlib
 ```
 
-## Running Microbenchmarks
+## Running Primitive with Analysis
 
 ```bash
-python3 benchmark-main.py --power-latency-analysis True \
-                          --runtime-analysis True \
-                          --build True
+python3 benchmark-main.py --build True --run-primitives --power-latency-analysis True \
+                          --runtime-analysis True --flamegraph-generation True \
 ```
 
-## Complete CLI Example (with defaults)
+## Running Microbenchmarks with Analysis
+
+```bash
+python3 benchmark-main.py --build True --run-microbenchmarks --power-latency-analysis True \
+                          --runtime-analysis True --flamegraph-generation True \
+```
+
+## Running Workloads with Analysis
+
+```bash
+python3 benchmark-main.py --build True --run-workloads --power-latency-analysis True \
+                          --runtime-analysis True --flamegraph-generation True \
+```
+
+## Complete CLI Example (with primitive profiling + defaults)
 
 ```bash
 python3 benchmark-main.py \
-  -s none \
-  -n 13 \
-  -b 12 \
-  --depth 5 \
+  --security-standard-level none \
+  --ring-dimension 13 \
+  --batch-size 12 \
+  --depth 10 \
   --num-threads 0 \
-  --compiler-optimizations True \
-  --build True \
+  --matrix-size 32 \
   --run-primitives True \
-  --csv-name test \
-  --verbose
+  --run-microbenchmarks False \
+  --run-workloads False \
+  --power-latency-analysis True \
+  --runtime-analysis True \
+  --flamegraph-generation False \
+  --build True \
+  --compiler-optimizations True \
+  --cold-caching True \
+  --csv-name "" \
+  --run-group False \
+  --fhe False \
+  --verbose False
 ```
 
 ## CLI Argument Reference
@@ -147,7 +183,7 @@ python3 benchmark-main.py \
 | `-s, --security-standard-level` | `none`      | CKKS security level (`none`, `128c`, `192c`, `256c`, `128q`, `192q`, `256q`) |
 | `-n, --ring-dimension`          | `13`        | CKKS ring dimension exponent → actual N = 2<sup>N</sup>                      |
 | `-b, --batch-size`              | `12`        | CKKS batch size exponent (2<sup>b</sup>, must < N)                           |
-| `-d, --depth`                   | `5`         | Multiplicative depth                                                         |
+| `-d, --depth`                   | `10`         | Multiplicative depth                                                         |
 | `-t, --num-threads`             | `0`         | OpenMP thread count (`0` = all logical cores)                                |
 | `--matrix-size`                 | `32`        | Matrix dimension for mat-mul (8/16/32/64)                                    |
 | `-p, --run-primitives`          | `False`     | Run primitive-level benchmarks                                               |

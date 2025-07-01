@@ -19,6 +19,7 @@ def process_cli_arguments() -> argparse.Namespace:
     )
     parser.add_argument(
         "-n", 
+        "--ring-dimension",
         type=positive_integer, 
         default=13, 
         help="Set CKKS parameter 'N'"
@@ -173,7 +174,7 @@ def process_cli_arguments() -> argparse.Namespace:
 def print_args(args: argparse.Namespace):
     log.print_section_header("Program Inputs")
     log.print_argument("Security Standard Level:", str(args.security_standard_level))
-    log.print_argument("N:", str(args.n))
+    log.print_argument("N:", str(args.ring_dimension))
     log.print_argument("Batch Size:", str(args.batch_size))
     log.print_argument("Depth:", str(args.depth))
     log.print_argument("Number of Threads:", str(args.num_threads))

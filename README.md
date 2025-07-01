@@ -161,7 +161,7 @@ python3 benchmark-main.py \
 | `-r, --runtime-analysis`        | `True`      | Collect latency & power metrics                                              |
 | `-e, --event-profiling`         | `True`      | Collect runtime metrics                                                      |
 | `-f, --flamegraph-generation`   | `False`     | Generate FlameGraphs                                                         |
-| `-b, --build`                   | `True`      | (Re)build project before running                                             |
+| `--build`                       | `True`      | (Re)build project before running                                             |
 | `-o, --compiler-optimizations`  | `True`      | Enable compiler optimizations                                                |
 | `--cold-caching`                | `True`      | Cold-cache primitive profiling                                               |
 | `-c, --csv-name`                | `""`        | Output file suffix (`<level>-results-<csv>.csv`)                             |

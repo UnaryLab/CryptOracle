@@ -11,8 +11,8 @@ from src.logging_utils import print_info, print_error, print_status, print_secti
 from src.globals import script_globals
 
 
+# Starts the perf stat process to monitor power usage
 def start_perf(output_path: str) -> subprocess.Popen:
-    """Starts the perf stat process to monitor power usage."""
     with open(output_path, "w") as output_file:
         return subprocess.Popen(
             ["perf", "stat", "-a", "-e", "power/energy-pkg/", "--interval-print", "5"],
@@ -21,27 +21,23 @@ def start_perf(output_path: str) -> subprocess.Popen:
         )
 
 def stop_perf(proc: subprocess.Popen) -> None:
-    """Stops the perf process."""
     if proc.poll() is None:
         proc.kill()
         proc.wait()
         
+# Processes metrics data collected by perf
 def process_metrics(target: str, perf_results: Dict[str, Dict[str, float]]) -> Dict[str, Dict[str, float]]:
-    """Processes metrics data collected by perf."""
     for event in script_globals.perf_events:
         perf_metric_name = event
         parse_and_extract_perf_data(target, perf_metric_name, perf_results)
         
 def parse_and_extract_perf_data(target: str, event_type: str, perf_results: Dict[str, Dict[str, float]]) -> None:
-    """Parses and extracts performance data from perf output and stores in nested dictionary."""
     perf_out = utils.get_absolute_path(os.path.join("out", "temp", "perf_report_out.txt"))
 
     with open(perf_out, "r", encoding="utf-8") as file:
         content = file.read()
 
-    event_count = re.search(
-        rf"{event_type}.*?# Event count \(approx.\):\s*([0-9,]+)", content, re.DOTALL
-    )
+    event_count = re.search(rf"{event_type}.*?# Event count \(approx.\):\s*([0-9,]+)", content, re.DOTALL)
 
     result = event_count.group(1).replace(",", "") if event_count else "FAILURE"
 
@@ -51,7 +47,6 @@ def parse_and_extract_perf_data(target: str, event_type: str, perf_results: Dict
     perf_results[target][event_type] = float(result) if result != "FAILURE" else float('nan')
     
 def compute_execution_metrics(microbenchmark: str, execution_time: float, setup_perf_results: Dict[str, float], setup_and_execution_perf_results: Dict[str, float], perf_results: Dict[str, float]) -> None:
-    """Computes execution time, rate, and IPC"""
     for event in script_globals.perf_events:
         try:
             setup_count = float(setup_perf_results[microbenchmark].get(event, 0))
@@ -73,8 +68,8 @@ def compute_execution_metrics(microbenchmark: str, execution_time: float, setup_
         cpu_cycles
     )
         
+# Prints the runtime analysis results for a single target
 def print_runtime_results(target: str, perf_results: Dict[str, float]) -> None:
-    """Prints the runtime analysis results for a single target."""
     print_info(f"{target}:")
     for event in perf_results:
         event_count = perf_results.get(event, 0)

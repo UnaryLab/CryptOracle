@@ -10,7 +10,7 @@ import src.utils as utils
 import src.performance_utils as perf_utils
 from src.logging_utils import print_info, print_error, print_status, print_section_header, print_timestamp
 
-    
+# Perform setup, runtime analysis, event profiling, flamegraph generation, and results recording for microbenchmarks
 def analyze_microbenchmark_performance(args: argparse.Namespace) -> None:
     import_microbenchmarks()
     
@@ -39,7 +39,6 @@ def analyze_microbenchmark_performance(args: argparse.Namespace) -> None:
     microbenchmark_save_csv(args)
     
 def import_microbenchmarks() -> None:
-    """Imports microbenchmarks from a YAML file."""
     file_path = utils.get_absolute_path("in/microbenchmarks.yaml")
 
     try:
@@ -50,11 +49,8 @@ def import_microbenchmarks() -> None:
         print_error(f"Error loading {file_path}: {str(e)}")
         raise
     
+# Clones the polycircuit repository, installs it, replaces the CMakeLists.txt, and builds the examples.
 def build_and_install_polycircuit(args: argparse.Namespace) -> None:
-    """
-    Clones the polycircuit repository, installs it, replaces the CMakeLists.txt,
-    and builds the examples.
-    """
     project_root = utils.get_project_root()
     polycircuit_repo_dir = os.path.join(project_root, "benchmarks", "polycircuit")
     polycircuit_install_dir = os.path.join(project_root, "benchmarks","polycircuit-install")
@@ -183,7 +179,6 @@ def build_and_install_polycircuit(args: argparse.Namespace) -> None:
 
 
 def execute_polycircuit_command(cmd: List[str], args: argparse.Namespace) -> None:
-    """Executes a Polycircuit command and handles errors."""
     try:
         subprocess.run(
             cmd, check=True, stdout=None if args.verbose else subprocess.DEVNULL, stderr=subprocess.PIPE
@@ -193,7 +188,6 @@ def execute_polycircuit_command(cmd: List[str], args: argparse.Namespace) -> Non
 
 
 def run_matrix_multiplication(polycircuit_binaries_path: str, serialized_files_path: str, matrix_size: str, args: argparse.Namespace, setup: bool) -> None:
-    """Runs the Matrix Multiplication microbenchmark."""
     cmd = [
         os.path.join(polycircuit_binaries_path, "build","MatrixMultiplicationUsage", "MatrixMultiplicationUsage"),
         "--size", str(args.matrix_size),
@@ -210,7 +204,6 @@ def run_matrix_multiplication(polycircuit_binaries_path: str, serialized_files_p
 
 
 def run_sign_eval(polycircuit_binaries_path: str, serialized_files_path: str, args: argparse.Namespace, setup: bool) -> None:
-    """Runs the Sign Evaluation microbenchmark."""
     cmd = [
         os.path.join(polycircuit_binaries_path, "build","SignEvaluationUsage", "SignEvaluationUsage"),
         "--cryptocontext_location", os.path.join(serialized_files_path, "cryptocontext.txt"),
@@ -223,7 +216,6 @@ def run_sign_eval(polycircuit_binaries_path: str, serialized_files_path: str, ar
 
 
 def run_logistic_function(polycircuit_binaries_path: str, serialized_files_path: str, args: argparse.Namespace, setup: bool) -> None:
-    """Runs the Logistic Function microbenchmark."""
     cmd = [
         os.path.join(polycircuit_binaries_path, "build", "LogisticFunctionUsage", "LogisticFunctionUsage"),
         "--cryptocontext_location", os.path.join(serialized_files_path, "cryptocontext.txt"),
@@ -319,8 +311,8 @@ def runtime_analysis_microbenchmarks(args: argparse.Namespace) -> None:
             print_info(f"  Power: {script_globals.microbenchmark_execution_powers[microbenchmark]:.3f} W")
 
 
+# Calculates the execution times, energies, and power consumption for each primitive
 def calculate_timings_and_energies_microbenchmarks() -> None:
-    """Calculates the execution times, energies, and power consumption for each primitive."""
     for microbenchmark in script_globals.microbenchmarks:
         execution_time = abs(script_globals.microbenchmark_setup_and_execution_times[microbenchmark] - script_globals.microbenchmark_setup_times[microbenchmark])
         energy = abs(script_globals.microbenchmark_setup_and_execution_energies[microbenchmark] - script_globals.microbenchmark_setup_energies[microbenchmark])
@@ -331,6 +323,7 @@ def calculate_timings_and_energies_microbenchmarks() -> None:
             (energy / execution_time) if execution_time > 0 else float("inf")
         )
         
+# Generates a dictionary containing the executable calls and arguments for each microbenchmark
 def generate_command_dict(polycircuit_binaries_path: str, serialized_files_path: str, input_image_path: str, args: argparse.Namespace) -> Dict[str, str]:
     commands = {}
 
@@ -410,10 +403,7 @@ def execute_runtime_profiling_microbenchmark(microbenchmark: str, command_string
     utils.check_metrics(microbenchmark, (script_globals.microbenchmark_setup_perf_results[microbenchmark] if setup_only else script_globals.microbenchmark_setup_and_execution_perf_results[microbenchmark]))
     
 
-def run_perf_microbenchmark(
-    command_string: str, event_string: str, args: argparse.Namespace
-) -> None:
-    """Runs the perf tool to collect performance data."""
+def run_perf_microbenchmark(command_string: str, event_string: str, args: argparse.Namespace) -> None:
     polling_frequency = 1000
 
     cmd: List[str] = [

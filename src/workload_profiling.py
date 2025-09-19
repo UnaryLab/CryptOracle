@@ -15,6 +15,39 @@ import yaml
 import zipfile
 import subprocess
 
+# Perform setup, runtime analysis, event profiling, flamegraph generation, and results recording for workloads
+def analyze_workload_performance(args: argparse.Namespace) -> None:
+    initialize_git_submodules(args)
+    unzip_weights()
+    validate_submodules()
+
+    import_workloads()
+    
+    if args.build:
+        print_status("Building workload benchmarking application...")
+        build_workloads(args)
+
+    if args.runtime_analysis:
+        print_status("Performing runtime analysis for workloads...")
+        runtime_analysis_start = datetime.now()
+        runtime_analysis_workloads(args)
+        runtime_analysis_end = datetime.now()
+        print_timestamp(f"Runtime analysis completed in {(runtime_analysis_end - runtime_analysis_start).total_seconds():.3f} seconds.")
+        
+    if args.event_profiling:
+        print_status("Performing event profiling for workloads...")
+        event_profiling_start = datetime.now()
+        workload_event_profiling(args)
+        event_profiling_end = datetime.now()
+        print_timestamp(f"Event profiling completed in {(event_profiling_end - event_profiling_start).total_seconds():.3f} seconds.")
+    
+    workload_save_csv(args)
+    
+    if args.flamegraph_generation:
+        print_status("Generating FlameGraphs for workloads...")
+        workload_generate_flamegraph(args)
+        
+
 def initialize_git_submodules(args: argparse.Namespace):
     submodules = {
         "benchmarks/contrib": "https://github.com/openfheorg/contrib.git",
@@ -67,6 +100,7 @@ def initialize_git_submodules(args: argparse.Namespace):
 
     log.print_info("Git submodules initialized.")
 
+# Unzip model weights for ResNet20
 def unzip_weights():
     resnet_dir = utils.get_absolute_path("benchmarks/contrib/images-resnet20-low-mem/")
     weights_zip = os.path.join(resnet_dir, "weights.zip")
@@ -81,6 +115,7 @@ def unzip_weights():
     else:
         print_info("Weights already extracted.")
 
+# Check to ensure required submodules are initialized
 def validate_submodules():
     required_paths = [
         "benchmarks/contrib/images-resnet20-low-mem",
@@ -93,38 +128,7 @@ def validate_submodules():
             print_error(f"Missing or empty submodule: {path}")
             raise FileNotFoundError(f"Submodule {path} is not initialized correctly.")
 
-
-def analyze_workload_performance(args: argparse.Namespace) -> None:
-    initialize_git_submodules(args)
-    unzip_weights()
-    validate_submodules()
-
-    import_workloads()
-    
-    if args.build:
-        print_status("Building workload benchmarking application...")
-        build_workloads(args)
-
-    if args.runtime_analysis:
-        print_status("Performing runtime analysis for workloads...")
-        runtime_analysis_start = datetime.now()
-        runtime_analysis_workloads(args)
-        runtime_analysis_end = datetime.now()
-        print_timestamp(f"Runtime analysis completed in {(runtime_analysis_end - runtime_analysis_start).total_seconds():.3f} seconds.")
-        
-    if args.event_profiling:
-        print_status("Performing event profiling for workloads...")
-        event_profiling_start = datetime.now()
-        workload_event_profiling(args)
-        event_profiling_end = datetime.now()
-        print_timestamp(f"Event profiling completed in {(event_profiling_end - event_profiling_start).total_seconds():.3f} seconds.")
-    
-    workload_save_csv(args)
-    
-    if args.flamegraph_generation:
-        print_status("Generating FlameGraphs for workloads...")
-        workload_generate_flamegraph(args)
-
+# Import the configured workloads for profiling
 def import_workloads() -> None:
     """Imports workloads from a YAML file."""
     file_path = utils.get_absolute_path("in/workloads.yaml")
@@ -137,16 +141,14 @@ def import_workloads() -> None:
         print_error(f"Error loading {file_path}: {str(e)}")
         raise
 
+# Builds OpenFHE workloads
 def build_workloads(args: argparse.Namespace) -> None:
-    """Builds OpenFHE workloads."""
     build_and_install_polycircuit(args)
     build_low_memory_resnet20(args)
     build_logistic_regression(args)
     build_chi_square_test(args)
     
-
 def build_low_memory_resnet20(args: argparse.Namespace) -> None:
-    """Builds OpenFHE workloads."""
     print_info("Building LowMemoryFHEResNet20 workload...")
     base_dir = utils.get_absolute_path("benchmarks/contrib/images-resnet20-low-mem")
     build_dir = os.path.join(base_dir, "build")
@@ -191,8 +193,8 @@ def patch_resnet_params(base_dir: str) -> None:
         with open(fhe_file, "w") as file:
             file.write(content)
 
+# Generate keys only if they don't already exist.
 def generate_keys_clean(base_dir: str, args: argparse.Namespace) -> None:
-    """Generate keys only if they don't already exist."""
     build_dir = os.path.join(base_dir, "build")
     keys_dir = os.path.join(base_dir, "keys_exp1")
     binary_path = os.path.join(build_dir, "LowMemoryFHEResNet20")
@@ -215,9 +217,7 @@ def generate_keys_clean(base_dir: str, args: argparse.Namespace) -> None:
         print_error(f"Key generation failed:\n{e.stderr.decode()}")
         raise RuntimeError("Key generation failed.")
 
-
 def build_logistic_regression(args: argparse.Namespace) -> None:
-    """Builds the OpenFHE Logistic Regression workload (lr_nag)."""
     print_info("Building Logistic Regression workload...")
     base_dir = utils.get_absolute_path("benchmarks/openfhe-logreg-training-examples")
     build_dir = os.path.join(base_dir, "build")
@@ -275,7 +275,6 @@ def build_chi_square_test(args: argparse.Namespace) -> None:
         print_error("Building Chi-Square Test workload failed")
 
 def run_cifar10(args: argparse.Namespace, setup: bool = False) -> None:
-    """Runs the CIFAR10 workload."""
     polycircuit_binaries_path = utils.get_absolute_path("benchmarks/polycircuit/examples")
     input_image_path = utils.get_absolute_path("benchmarks/polycircuit/examples/CIFAR10Usage/class-1.txt")
     
@@ -294,7 +293,6 @@ def run_cifar10(args: argparse.Namespace, setup: bool = False) -> None:
         print_error("CIFAR10 workload failed to run")
         
 def run_low_memory_resnet20(args: argparse.Namespace, setup: bool = False) -> None:
-    """Runs OpenFHE workloads."""
     base_dir = utils.get_absolute_directory("benchmarks/contrib/images-resnet20-low-mem")
     build_dir = os.path.join(base_dir, "build")
     binary_path = os.path.join(build_dir, "LowMemoryFHEResNet20")
@@ -306,20 +304,16 @@ def run_low_memory_resnet20(args: argparse.Namespace, setup: bool = False) -> No
     os.makedirs(input_dir, exist_ok=True)
 
     image_path = os.path.join(input_dir, "vale.jpg")
-    # print(f"DEBUG: Looking for image at {image_path}")
 
     if not os.path.isfile(image_path):
         print(f"WARNING: Default image not found at {image_path}. Checking for other images...")
         jpg_files = [f for f in os.listdir(input_dir) if f.endswith('.jpg')]
         if jpg_files:
             image_path = os.path.join(input_dir, jpg_files[0])
-            # print(f"DEBUG: Using alternative image: {image_path}")
         else:
-            # print(f"ERROR: No valid .jpg images found in {input_dir}. Aborting run.")
             return
 
     relative_image_path = os.path.relpath(image_path, start=os.path.dirname(build_dir))
-    # print(f"DEBUG: Relative image path passed to binary: {relative_image_path}")
 
     cmd = [
         binary_path,
@@ -342,7 +336,6 @@ def run_low_memory_resnet20(args: argparse.Namespace, setup: bool = False) -> No
         return
 
 def run_logistic_regression(args: argparse.Namespace, setup: bool = False) -> None:
-    """Runs OpenFHE Logistic Regression workloads."""
     base_dir = utils.get_absolute_directory("benchmarks/openfhe-logreg-training-examples")
     build_dir = os.path.join(base_dir, "build")
     
@@ -490,8 +483,8 @@ def calculate_timings_and_energies_workloads() -> None:
         )
                 
     
+# Generates a dictionary containing the executable calls and arguments for each workload.
 def generate_command_dict(workload_dir_path: str, args: argparse.Namespace) -> Dict[str, str]:
-    """Generates a dictionary containing the executable calls and arguments for each workload."""
     commands = {}
     
     all_workload_commands = {
@@ -524,8 +517,8 @@ def generate_command_dict(workload_dir_path: str, args: argparse.Namespace) -> D
 
     return commands
 
+# Performs event profiling for each workload based on the events specified inside of in/perf_events.yaml
 def workload_event_profiling(args: argparse.Namespace) -> None:
-    """Runs event profiling for workloads."""
     workload_dir_path = utils.get_absolute_path("benchmarks")
     
     build_dirs = {
@@ -562,7 +555,6 @@ def workload_event_profiling(args: argparse.Namespace) -> None:
     
 
 def execute_runtime_profiling_workload(workload: str, binary_dir_path: str, command_string: str, event_string: str, args: argparse.Namespace, setup_only: bool = False) -> None:
-    """Performs event profiling for a single workload."""
     setup_string = "in setup mode" if setup_only else ""
     print_info(f"Running {workload} workload in {setup_string}...")
     
@@ -585,7 +577,6 @@ def execute_runtime_profiling_workload(workload: str, binary_dir_path: str, comm
     utils.check_metrics(workload, (script_globals.workload_setup_perf_results[workload] if setup_only else script_globals.workload_setup_and_execution_perf_results[workload]))
     
 def run_perf_workload(binary_dir_path: str,command_string: str, event_string: str, args: argparse.Namespace) -> None:
-    """Runs perf tool to collect performance data for each workload."""
     polling_frequency = 1000
 
     cmd: List[str] = [
@@ -622,8 +613,6 @@ def run_perf_workload(binary_dir_path: str,command_string: str, event_string: st
         )
 
 def compute_execution_metrics(workload: str) -> None:
-    """Computes execution time, rate, IPC, FLOPS, and memory bandwidth metrics for a single workload."""
-
     for event in script_globals.perf_events:
         event_count = float(script_globals.workload_perf_results.get(workload, {}).get(event, 0))
         script_globals.workload_perf_results[workload][event] = event_count
@@ -659,8 +648,8 @@ def workload_save_csv(args: argparse.Namespace) -> None:
         script_globals.workload_execution_powers, 
         script_globals.workload_perf_results)
 
+# Returns the working directory for a given workload
 def get_cwd_workload(workload: str) -> str:
-    """Returns the cwd for the workload."""
     cwd: str = utils.get_project_root()
     if workload == "low_memory_resnet20":
         cwd = utils.get_absolute_path("benchmarks/contrib/images-resnet20-low-mem/build")
@@ -671,6 +660,7 @@ def get_cwd_workload(workload: str) -> str:
     else:
         cwd = utils.get_project_root()
 
+# Generate flamegraphs for each workload
 def workload_generate_flamegraph(args: argparse.Namespace) -> None:
     for workload in script_globals.workloads:
         print_info(f"Generating FlameGraph for {workload}...")

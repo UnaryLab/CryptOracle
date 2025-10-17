@@ -13,16 +13,30 @@ The **CryptOracle Performance Model** is a lightweight analytic tool for estimat
 
 ---
 
+## Python Dependencies
+
+| Package        | Purpose                        |
+|---------------|---------------------------------|
+| `pandas`      | Data manipulation and analysis  |
+| `matplotlib`  | Plotting and visualization      |
+| `seaborn`     | Enhanced visualization          |
+| `numpy`       | Numerical computations          |
+| `scikit-learn`| Statistical metrics             |
+| `pyyaml`      | Configuration file parsing       |
+
+---
+
 ## Usage
 
 ```bash
-python perf-model.py --config <yaml_config_path> --output-dir <output_path>
+python3 perf-model.py --config <yaml_config_path> --output-dir <output_path>
 ```
 
 **Example:**
 
 ```bash
-python perf-model.py --config config.yaml --output-dir results/analysis
+cd perf-model/
+python3 perf-model.py --config microbenchmark-configs/matrix_multiplication_config.yaml --output-dir results/
 ```
 
 ---
@@ -34,7 +48,7 @@ python perf-model.py --config config.yaml --output-dir results/analysis
 | Field                | Description                                      |
 |----------------------|--------------------------------------------------|
 | `name`               | Application name                                 |
-| `primitive_benchmarks` | Path to primitive benchmark results CSV         |
+| `primitive_benchmarks` | Path to primitive benchmark results CSV        |
 | `actual_benchmarks`  | Path to actual application benchmark results CSV |
 | `statistic`          | Statistical measure (`mean` or `median`)         |
 | `title`              | Title for output files                           |
@@ -63,25 +77,6 @@ workload-configs/
     ├─ cifar10_config.yaml
     ├─ low_memory_resnet20_config.yaml
     └─ logistic_regression_config.yaml
-```
-
----
-
-## Python Dependencies
-
-| Package        | Purpose                        |
-|---------------|---------------------------------|
-| `pandas`      | Data manipulation and analysis  |
-| `matplotlib`  | Plotting and visualization      |
-| `seaborn`     | Enhanced visualization          |
-| `numpy`       | Numerical computations          |
-| `scikit-learn`| Statistical metrics             |
-| `pyyaml`      | Configuration file parsing       |
-
-Install with:
-
-```bash
-pip install pandas matplotlib seaborn numpy scikit-learn pyyaml
 ```
 
 ---

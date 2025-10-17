@@ -235,7 +235,7 @@ def run_perf(
     
     # If power and latency analysis is enabled, adjust polling frequency
     # based on the average runtime of the non-performance part
-    if (args.power_latency_analysis):
+    if (args.runtime_analysis):
         non_perf_runtime: float = (
             script_globals.setup_average_time.get(primitive, 0) if setup_only
             else script_globals.setup_and_execution_average_time.get(primitive, 0)

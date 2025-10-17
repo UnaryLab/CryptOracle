@@ -82,7 +82,7 @@ def initialize_csv_file(csv_output_file: str, target_items: List[str], args: arg
     # Matrix size should only be included in the csv in certain cases
     headers += [
         "security_standard_level", "n", "batch_size", "depth", "num_threads",#"matrix_size", 
-        "power_latency_analysis", "runtime_analysis", "flamegraph_generation", "build", "compiler_optimizations", "cold_caching"
+        "runtime_analysis", "event_profiling", "flamegraph_generation", "build", "compiler_optimizations", "cold_caching"
     ]
 
     for target in target_items:
@@ -116,7 +116,7 @@ def save_results_csv(csv_output_path: str,args: argparse.Namespace, target_items
     # Matrix size should only be included in the csv in certain cases
     csv_row += [
         args.security_standard_level, args.ring_dimension, args.batch_size, args.depth, args.num_threads, #args.matrix_size,
-        args.power_latency_analysis, args.runtime_analysis, args.flamegraph_generation, args.build, args.compiler_optimizations, args.cold_caching
+        args.runtime_analysis, args.event_profiling, args.flamegraph_generation, args.build, args.compiler_optimizations, args.cold_caching
     ]
     
     for target in target_items:

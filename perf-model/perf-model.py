@@ -318,7 +318,7 @@ def main():
     print_status(f"Estimated runtimes saved to {output_path}")
     
     print_status("Generating plots")
-    plot_estimated_runtimes(estimated_df, config, args.output_dir)
+    # plot_estimated_runtimes(estimated_df, config, args.output_dir)
 
     df = load_and_process_data(config['actual_benchmarks'], output_path, config)
     

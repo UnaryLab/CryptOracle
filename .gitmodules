@@ -31,3 +31,9 @@
 [submodule "/home/co224015/profiling-instance/CryptOracle/benchmarks/openfhe-genomic-examples"]
 	path = /home/co224015/profiling-instance/CryptOracle/benchmarks/openfhe-genomic-examples
 	url = https://github.com/openfheorg/openfhe-genomic-examples
+[submodule "openfhe-configurator"]
+	path = openfhe-configurator
+	url = https://github.com/openfheorg/openfhe-configurator.git
+[submodule "openfhe-hexl"]
+	path = openfhe-hexl
+	url = https://github.com/openfheorg/openfhe-hexl.git

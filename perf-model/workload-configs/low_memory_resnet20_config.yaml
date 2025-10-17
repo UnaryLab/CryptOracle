@@ -5,8 +5,8 @@ title: "resnet" # Title to be used in the plot
 event_type: "Time" # Event type being esimated
 
 ### CSV Paths ###
-primitive_benchmarks: "datasets/amd/primitives/resnet-logreg-primitives.csv" # Path to the primitive benchmarks CSV
-actual_benchmarks: "datasets/amd/workloads/resnet-threads-sweep.csv" # Path to the actual application CSV for model validation (optional)
+primitive_benchmarks: "../datasets/amd/primitives/resnet-logreg-primitives.csv" # Path to the primitive benchmarks CSV
+actual_benchmarks: "../datasets/amd/workloads/resnet-threads-sweep.csv" # Path to the actual application CSV for model validation (optional)
 
 ### Performance Model Parameters ###
 parameters:

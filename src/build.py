@@ -48,6 +48,9 @@ def append_conditional_opts(args: argparse.Namespace) -> None:
     else:
         script_globals.cmake_opts.extend(["-DWITH_OPENMP=OFF", "-DWITH_TCM=OFF"])
         
+    if False:
+        script_globals.cmake_opts.append("-DWITH_INTEL_HEXL=ON")
+        
 def run_cmake_and_make(args: argparse.Namespace, build_dir: str) -> None:
     """Run CMake and Make commands."""
     log.print_info("Running CMake for OpenFHE...")

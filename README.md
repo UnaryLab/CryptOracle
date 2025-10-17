@@ -25,11 +25,11 @@ CryptoOracle is composed of three tightly-integrated pillars:
 
 CryptoOracle serves as a shared platform to accelerate collaborative progress in FHE applications, algorithms, software, and hardware. Clone the repo, run the benchmarks, and join the effort!  
 
-### Clone the Repository  
+<!-- ### Clone the Repository  
 
 ```bash
 # TODO: ANON REMOVAL
-````
+```` -->
 
 ## Features
 
@@ -74,7 +74,7 @@ sudo sysctl -p
 
 ### Install System Dependencies
 
-> **Heads-up:** WSL *will not work* (missing full `perf` support as of 11/10/24).
+> **FYI:** WSL *will not work* (missing full `perf` support as of 11/10/24).
 
 ```bash
 sudo apt-get update -y && sudo apt-get upgrade -y
@@ -118,7 +118,7 @@ pip install psutil py-cpuinfo GPUtil dmidecode pyyaml pandas numpy matplotlib
 
 ## Example Flows
 
-### Primitive Profiling
+### 1. Primitive Profiling
 
 1. Configure primitives to be profiling under `in/primitives.yaml`. This contains the list of primitives to be profiled.
 2. Configure `in/perf_events.yaml` with the desired performance events to be profiled.
@@ -131,12 +131,12 @@ python3 benchmark-main.py \
   --depth 10 \
   --num-threads 0 \
   --run-primitives True \
-  --csv-name example_run \
+  --csv-name example_run
 ```
 
-Results will be outputted to the csv `out/primitives-example_run-csv.csv`. By default, runtime analyis and event profiling are enabled. 
+Results will be outputted to the csv `out/primitives-example_run-csv.csv`. By default, runtime analysis and event profiling are enabled. 
 
-### Microbenchmark and Primitive Profiling
+### 2. Microbenchmark and Primitive Profiling
 
 This configuration is the same as the previous but with microbenchmark profiling enabled in addition to primitive profiling. Before running, configure microbenchmarks to be profiled under `in/microbenchmarks.yaml`.
    
@@ -149,12 +149,12 @@ python3 benchmark-main.py \
   --num-threads 0 \
   --run-primitives True \
   --run-microbenchmarks True \
-  --csv-name example_run \
+  --csv-name example_run
 ```
 
 Results will be outputted to the csvs `out/primitives-example_run-csv.csv` and `out/microbenchmarks-example_run-csv.csv`. 
 
-### Workload Profiling with Flamegraphs
+### 3. Workload Profiling with Flamegraphs
 
 In this example, the callstacks for each workload configured under `in/workloads.yaml` are recorded and outputted as a flamegraph visualization. 
 
@@ -167,12 +167,12 @@ python3 benchmark-main.py \
   --num-threads 0 \
   --run-workloads True \
   --flamegraph-generation True \
-  --csv-name example_run \
+  --csv-name example_run
 ```
 
-Flamegraphs for each workload will be outputted to the `out` directory by default.
+Flamegraphs for each workload will be outputted to the `out/flamegraphs/` directory.
 
-### Primitive Profiling using Batched Runs
+### 4. Primitive Profiling using Group Runs
 This repository also allows for the generation of full datasets with sweeps across different security and hardware parameters, such as ring dimension and thread count, respectively. The configuration file under `in/input_parameters.yaml` allows users to specify the security and hardware parameters that they would like to sweep, and `util/run_group.py` automatically generates and runs all valid parameter combinations through the hardware profiler. 
 
 ```bash
@@ -180,10 +180,13 @@ python3 util/run_group.py \
   --num-runs 5 \
   --run-primitives True \
   --run-microbenchmarks True \
-  --csv-name example_run \
+  --csv-name example_run
 ```
 
 The above command will run each parameter combination under `in/input_parameters.yaml` 5 times for both primitives and microbenchmarks.
+
+### 5. Usage of Performance Model
+Performance model scripts and configuration files are located under `perf-model/`. For example usage, see `perf-model/README.md`.
 
 ## CLI Argument Reference
 

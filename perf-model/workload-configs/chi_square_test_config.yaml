@@ -5,8 +5,8 @@ title: "chi_square_test" # Title to be used in the plot
 event_type: "Energy" # Event type being esimated
 
 ### CSV Paths ###
-primitive_benchmarks: "datasets/amd/primitives/chi-square-primitives.csv" # Path to the primitive benchmarks CSV
-actual_benchmarks: "datasets/amd/workloads/chi-square-results.csv" # Path to the actual application CSV for model validation (optional)
+primitive_benchmarks: "../datasets/amd/primitives/chi-square-primitives.csv" # Path to the primitive benchmarks CSV
+actual_benchmarks: "../datasets/amd/workloads/chi-square-results.csv" # Path to the actual application CSV for model validation (optional)
 
 ### Performance Model Parameters ###
 parameters:

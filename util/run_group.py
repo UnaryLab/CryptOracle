@@ -38,7 +38,10 @@ def parse_args():
         help="Set number of runs for each parameter combo. Default is 5."
     )
     parser.add_argument(
-        "--verbose", action="store_true", help="Enable verbose output"
+        "-v",
+        "--verbose", 
+        action="store_true", 
+        help="Enable verbose output"
     )
     
     parser.add_argument(

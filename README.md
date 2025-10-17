@@ -116,37 +116,78 @@ pip install --upgrade pip
 pip install psutil py-cpuinfo GPUtil dmidecode pyyaml pandas numpy matplotlib
 ```
 
-### Using the Profiler
+## Example Flows
 
-### Example CLI arguments for primitive profiling
+### Primitive Profiling
+
+1. Configure primitives to be profiling under `in/primitives.yaml`. This contains the list of primitives to be profiled.
+2. Configure `in/perf_events.yaml` with the desired performance events to be profiled.
+
 ```bash
 python3 benchmark-main.py \
-  -s none \
-  -n 13 \
-  -b 12 \
+  --security-standard-level none \
+  --ring-dimension 16 \
+  --batch-size 12 \
   --depth 10 \
   --num-threads 0 \
-  --compiler-optimizations True \
-  --build True \
   --run-primitives True \
-  --csv-name test \
+  --csv-name example_run \
 ```
 
-### Example CLI arguments for microbenchmark profiling
+Results will be outputted to the csv `out/primitives-example_run-csv.csv`. By default, runtime analyis and event profiling are enabled. 
+
+### Microbenchmark and Primitive Profiling
+
+This configuration is the same as the previous but with microbenchmark profiling enabled in addition to primitive profiling. Before running, configure microbenchmarks to be profiled under `in/microbenchmarks.yaml`.
+   
 ```bash
 python3 benchmark-main.py \
-  -s none \
-  -n 13 \
-  -b 12 \
+  --security-standard-level none \
+  --ring-dimension 16 \
+  --batch-size 12 \
   --depth 10 \
   --num-threads 0 \
-  --compiler-optimizations True \
-  --build True \
+  --run-primitives True \
   --run-microbenchmarks True \
-  --csv-name test \
+  --csv-name example_run \
 ```
+
+Results will be outputted to the csvs `out/primitives-example_run-csv.csv` and `out/microbenchmarks-example_run-csv.csv`. 
+
+### Workload Profiling with Flamegraphs
+
+In this example, the callstacks for each workload configured under `in/workloads.yaml` are recorded and outputted as a flamegraph visualization. 
+
+```bash
+python3 benchmark-main.py \
+  --security-standard-level none \
+  --ring-dimension 16 \
+  --batch-size 12 \
+  --depth 10 \
+  --num-threads 0 \
+  --run-workloads True \
+  --flamegraph-generation True \
+  --csv-name example_run \
+```
+
+Flamegraphs for each workload will be outputted to the `out` directory by default.
+
+### Primitive Profiling using Batched Runs
+This repository also allows for the generation of full datasets with sweeps across different security and hardware parameters, such as ring dimension and thread count, respectively. The configuration file under `in/input_parameters.yaml` allows users to specify the security and hardware parameters that they would like to sweep, and `util/run_group.py` automatically generates and runs all valid parameter combinations through the hardware profiler. 
+
+```bash
+python3 util/run_group.py \
+  --num-runs 5 \
+  --run-primitives True \
+  --run-microbenchmarks True \
+  --csv-name example_run \
+```
+
+The above command will run each parameter combination under `in/input_parameters.yaml` 5 times for both primitives and microbenchmarks.
 
 ## CLI Argument Reference
+
+### `benchmark-main.py` CLI argument reference
 
 | **Arg**                         | **Default** | **Description**                                                              |
 | ------------------------------- | ----------- | ---------------------------------------------------------------------------- |
@@ -159,14 +200,29 @@ python3 benchmark-main.py \
 | `-k, --run-microbenchmarks`     | `False`     | Run microbenchmarks                                                          |
 | `-w, --run-workloads`           | `False`     | Run full workloads                                                           |
 | `-r, --runtime-analysis`        | `True`      | Collect latency & power metrics                                              |
-| `-e, --event-profiling`         | `True`      | Collect runtime metrics                                                      |
+| `-e, --event-profiling`         | `True`      | Collect performance event metrics                                            |
 | `-f, --flamegraph-generation`   | `False`     | Generate FlameGraphs                                                         |
 | `--build`                       | `True`      | (Re)build project before running                                             |
 | `-o, --compiler-optimizations`  | `True`      | Enable compiler optimizations                                                |
 | `--cold-caching`                | `True`      | Cold-cache primitive profiling                                               |
 | `-c, --csv-name`                | `""`        | Output file suffix (`<level>-results-<csv>.csv`)                             |
-| `-g, --run-group`               | `False`     | Run benchmarks defined in a YAML group file                                  |
+| `-g, --run-group`               | `False`     | Internal flag used by the run_group.py script                                |
 | `--fhe`                         | `False`     | Enable FHE mode (required for bootstrapping primitive)                       |
+| `-v, --verbose`                 | `False`     | Verbose logging                                                              |
+| `-h, --help`                    |             | Show help message                                                            |
+
+### `run_group.py` CLI argument reference
+
+| **Arg**                         | **Default** | **Description**                                                              |
+| ------------------------------- | ----------- | ---------------------------------------------------------------------------- |
+| `-b, --build`                   | `True`      | Toggle build/rebuild (including checks)                                      |
+| `-n, --num-runs`                | `1`         | Number of runs for each parameter combination                                |
+| `-p, --run-primitives`          | `False`     | Run primitive-level benchmarks                                               |
+| `-k, --run-microbenchmarks`     | `False`     | Run microbenchmarks                                                          |
+| `-w, --run-workloads`           | `False`     | Run full workloads                                                           |
+| `-e, --event-profiling`         | `True`      | Collect performance event metrics                                            |
+| `--fhe`                         | `False`     | Enable FHE mode (required for bootstrapping primitive)                       |
+| `-c, --csv-name`                | `""`        | Output file suffix (`<level>-results-<csv>.csv`)                             |
 | `-v, --verbose`                 | `False`     | Verbose logging                                                              |
 | `-h, --help`                    |             | Show help message                                                            |
 

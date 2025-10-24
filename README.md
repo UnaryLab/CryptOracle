@@ -236,9 +236,19 @@ Performance model scripts and configuration files are located under `perf-model/
 
 * **OpenFHE Documentation** - [https://openfhe-development.readthedocs.io/en/latest/](https://openfhe-development.readthedocs.io/en/latest/)
 
-## Authors
+## Citing
 
-C. Brynds, P. McLeod, L. Caccamise, A. Pal, D. Saiham, S. Rahman, J. S. Miguel, and D. Wu, “Cryptoracle: A modular framework to characterize fully homomorphic encryption,” 2025. [Online]. Available: https://arxiv.org/abs/2510.03565.
+If CryptOracle has been useful in your own research, please cite us using the following bibtex citation:
+
+```
+@article{brynds2025cryptoracle,
+      title={CryptOracle: A Modular Framework to Characterize Fully Homomorphic Encryption}, 
+      author={Cory Brynds and Parker McLeod and Lauren Caccamise and Asmita Pal and Dewan Saiham and Sazadur Rahman and Joshua San Miguel and Di Wu},
+      year={2025},
+      journal={arXiv},
+      url={https://arxiv.org/abs/2510.03565}, 
+}
+```
 
 ## License
 

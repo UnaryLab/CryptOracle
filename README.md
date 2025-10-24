@@ -3,7 +3,10 @@
 ### Overview  
 
 **CryptoOracle** is an **open-source, fully modular framework** for the **systematic characterization, profiling, and performance modeling** of workloads that rely on **Fully Homomorphic Encryption (FHE)**.  
+
 Built on top of the community-maintained **[OpenFHE](https://openfhe-development.readthedocs.io/en/latest/index.html)** library, with a focus on the CKKS approximate-arithmetic scheme, CryptoOracle streamlines **reproducible evaluation** for cryptography researchers, system architects, and ML practitioners.
+
+The paper associated with the CryptOracle codebase can be found on arXiv as **[Cryptoracle: A Modular Framework to Characterize Fully Homomorphic Encryption](https://arxiv.org/abs/2510.03565)**.
 
 CryptoOracle is composed of three tightly-integrated pillars:
 
@@ -235,7 +238,7 @@ Performance model scripts and configuration files are located under `perf-model/
 
 ## Authors
 
-* Anonymous until conference submission results announced # TODO: ANON REMOVAL
+C. Brynds, P. McLeod, L. Caccamise, A. Pal, D. Saiham, S. Rahman, J. S. Miguel, and D. Wu, “Cryptoracle: A modular framework to characterize fully homomorphic encryption,” 2025. [Online]. Available: https://arxiv.org/abs/2510.03565.
 
 ## License
 

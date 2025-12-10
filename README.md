@@ -241,7 +241,7 @@ Performance model scripts and configuration files are located under `perf-model/
 If CryptOracle has been useful in your own research, please cite us using the following bibtex citation:
 
 ```
-Currently anonymous pending the results of a current conference submission.
+Currently anonymous pending the results of a conference submission.
 ```
 
 ## License

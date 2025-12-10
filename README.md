@@ -18,11 +18,11 @@ CryptoOracle is composed of three tightly-integrated pillars:
 
 #### Key Highlights  
 
-* 📊 **Reproducible evaluation** across workloads, parameter sets, and hardware vendors  
-* ⚡ **Fast design-space exploration** via predictive models
-* 🛠️ **Extensible backend support** - current release targets CPUs with OpenFHE; GPU back-ends and additional FHE libraries are on the roadmap  
-* 🔍 **Rich metadata logging** - all security, algorithmic, and hardware settings plus raw and modeled results are stored in JSON/CSV for downstream analysis  
-* 🤝 **Community-driven** - contributions of new benchmarks, hardware targets, and modeling techniques are welcome  
+* **Reproducible evaluation** across workloads, parameter sets, and hardware vendors  
+* **Fast design-space exploration** via predictive models
+* **Extensible backend support** - current release targets CPUs with OpenFHE; GPU backends and additional FHE libraries are on the roadmap  
+* **Rich metadata logging** - all security, algorithmic, and hardware settings plus raw and modeled results are stored in JSON/CSV for downstream analysis  
+* **Community-driven** - contributions of new benchmarks, hardware targets, and modeling techniques are welcome  
 
 ---  
 
@@ -241,13 +241,7 @@ Performance model scripts and configuration files are located under `perf-model/
 If CryptOracle has been useful in your own research, please cite us using the following bibtex citation:
 
 ```
-@article{brynds2025cryptoracle,
-      title={CryptOracle: A Modular Framework to Characterize Fully Homomorphic Encryption}, 
-      author={Cory Brynds and Parker McLeod and Lauren Caccamise and Asmita Pal and Dewan Saiham and Sazadur Rahman and Joshua San Miguel and Di Wu},
-      year={2025},
-      journal={arXiv},
-      url={https://arxiv.org/abs/2510.03565}, 
-}
+Currently anonymous pending the results of a current conference submission.
 ```
 
 ## License

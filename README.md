@@ -241,7 +241,13 @@ Performance model scripts and configuration files are located under `perf-model/
 If CryptOracle has been useful in your own research, please cite us using the following bibtex citation:
 
 ```
-Currently anonymous pending the results of a conference submission.
+@article{brynds2025cryptoracle,
+      title={CryptOracle: A Modular Framework to Characterize Fully Homomorphic Encryption}, 
+      author={Cory Brynds and Parker McLeod and Lauren Caccamise and Asmita Pal and Dewan Saiham and Sazadur Rahman and Joshua San Miguel and Di Wu},
+      year={2025},
+      journal={arXiv},
+      url={https://arxiv.org/abs/2510.03565}, 
+}
 ```
 
 ## License

@@ -1,6 +1,6 @@
 # CryptOracle Benchmarking and Performance Analysis Repository  
 
-**February 2026:** CryptOracle has been accepted to **ISPASS 2026**!
+*Note: CryptOracle has been accepted to ISPASS 2026!*
 
 ### Overview  
 

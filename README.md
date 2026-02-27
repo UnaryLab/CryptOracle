@@ -1,5 +1,7 @@
 # CryptOracle Benchmarking and Performance Analysis Repository  
 
+**February 2026:** CryptOracle has been accepted to **ISPASS 2026**!
+
 ### Overview  
 
 **CryptoOracle** is an **open-source, fully modular framework** for the **systematic characterization, profiling, and performance modeling** of workloads that rely on **Fully Homomorphic Encryption (FHE)**.  
@@ -241,12 +243,11 @@ Performance model scripts and configuration files are located under `perf-model/
 If CryptOracle has been useful in your own research, please cite us using the following bibtex citation:
 
 ```
-@article{brynds2025cryptoracle,
-      title={CryptOracle: A Modular Framework to Characterize Fully Homomorphic Encryption}, 
-      author={Cory Brynds and Parker McLeod and Lauren Caccamise and Asmita Pal and Dewan Saiham and Sazadur Rahman and Joshua San Miguel and Di Wu},
-      year={2025},
-      journal={arXiv},
-      url={https://arxiv.org/abs/2510.03565}, 
+@inproceedings{2026ispass_cryptoracle,
+  title     = {CryptOracle: A Modular Framework to Characterize FHE},
+  author    = {Cory Brynds and Parker McLeod and Lauren Caccamise and Asmita Pal and Dewan Saiham and Sazadur Rahman and Joshua San Miguel and Di Wu},
+  booktitle = {International Symposium on Performance Analysis of Systems and Software},
+  year      = {2026}
 }
 ```
 

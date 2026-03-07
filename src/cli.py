@@ -1,7 +1,6 @@
 import argparse
 import os
 import src.logging_utils as log
-import sys
 from src.globals import script_globals
 
 def process_cli_arguments() -> argparse.Namespace:
@@ -54,81 +53,104 @@ def process_cli_arguments() -> argparse.Namespace:
     parser.add_argument(
         "-p",
         "--run-primitives",
-        nargs="?",
-        const=True,
-        type=is_boolean,
+        action="store_true",
         default=False,
         help="Toggle running primitive analysis",
     )
     parser.add_argument(
         "-k",
         "--run-microbenchmarks",
-        nargs="?",
-        const=True,
-        type=is_boolean,
+        action="store_true",
         default=False,
         help="Toggle running microbenchmarks",
     )
     parser.add_argument(
         "-w",
         "--run-workloads",
-        nargs="?",
-        const=True,
-        type=is_boolean,
+        action="store_true",
         default=False,
         help="Toggle running workloads",
     )
     parser.add_argument(
         "-r",
         "--runtime-analysis",
-        nargs="?",
-        const=True,
-        type=is_boolean,
-        default=True,
-        help="Toggle runtime analysis",
+        action="store_true",
+        dest="runtime_analysis",
+        help="Enable runtime analysis",
     )
+    parser.add_argument(
+        "--no-runtime-analysis",
+        action="store_false",
+        dest="runtime_analysis",
+        help="Disable runtime analysis",
+    )
+    parser.set_defaults(runtime_analysis=True)
     parser.add_argument(
         "-e",
         "--event-profiling",
-        nargs="?",
-        const=True,
-        type=is_boolean,
-        default=True,
-        help="Toggle event profiling",
+        action="store_true",
+        dest="event_profiling",
+        help="Enable event profiling",
     )
+    parser.add_argument(
+        "--no-event-profiling",
+        action="store_false",
+        dest="event_profiling",
+        help="Disable event profiling",
+    )
+    parser.set_defaults(event_profiling=True)
     parser.add_argument(
         "-f",
         "--flamegraph-generation",
-        nargs="?",
-        const=True,
-        type=is_boolean,
+        action="store_true",
         default=False,
         help="Toggle FlameGraph generation",
     )
     parser.add_argument(
         "--build",
-        nargs="?",
-        const=True,
-        type=is_boolean,
-        default=True,
-        help="Toggle build/rebuild (including checks)",
+        action="store_true",
+        dest="build",
+        help="Enable build/rebuild (including checks)",
+    )
+    parser.add_argument(
+        "--no-build",
+        action="store_false",
+        dest="build",
+        help="Disable build/rebuild (including checks)",
+    )
+    parser.set_defaults(build=True)
+    parser.add_argument(
+        "--setup-benchmarking",
+        action="store_true",
+        default=False,
+        help="Set up and build all OpenFHE, primitive, microbenchmark, and workload benchmarking targets without running profiling.",
     )
     parser.add_argument(
         "--compiler-optimizations",
-        nargs="?",
-        const=True,
-        type=is_boolean,
-        default=True,
-        help="Toggle compiler optimizations",
+        action="store_true",
+        dest="compiler_optimizations",
+        help="Enable compiler optimizations",
     )
     parser.add_argument(
-        "--cold-caching",
-        nargs="?",
-        const=True,
-        type=is_boolean,
-        default=True,
-        help="Toggle cold-caching during primitive profiling",
+        "--no-compiler-optimizations",
+        action="store_false",
+        dest="compiler_optimizations",
+        help="Disable compiler optimizations",
     )
+    parser.set_defaults(compiler_optimizations=True)
+    parser.add_argument(
+        "--cold-caching",
+        action="store_true",
+        dest="cold_caching",
+        help="Enable cold-caching during primitive profiling",
+    )
+    parser.add_argument(
+        "--no-cold-caching",
+        action="store_false",
+        dest="cold_caching",
+        help="Disable cold-caching during primitive profiling",
+    )
+    parser.set_defaults(cold_caching=True)
     parser.add_argument(
         "-c",
         "--csv-name",
@@ -139,34 +161,71 @@ def process_cli_arguments() -> argparse.Namespace:
     parser.add_argument(
         "-g",
         "--run-group",
-        nargs="?",
-        const=True,
-        type=is_boolean,
+        action="store_true",
         default=False,
         help="Run a group of benchmarks based on the input .yaml file",
     ) 
     parser.add_argument(
+        "--num-runs",
+        type=positive_integer,
+        default=1,
+        help="Number of runs per parameter combination when --run-group is enabled.",
+    )
+    parser.add_argument(
         "--fhe",
-        nargs="?",
-        const=True,
-        type=is_boolean,
+        action="store_true",
         default=False,
-        help="Enable FHE mode (True required for bootstrapping primitive)",
+        help="Enable FHE mode (required for bootstrapping primitive)",
     )
     parser.add_argument(
         "-v",
         "--verbose",
-        nargs="?",
-        const=True,
-        type=is_boolean,
+        action="store_true",
         default=False,
         help="Enable verbose output"
+    )
+    parser.add_argument(
+        "--perf-path",
+        type=str,
+        default="perf",
+        help="Path to perf binary to use for all perf operations.",
+    )
+    parser.add_argument(
+        "--primitives-config",
+        type=str,
+        default="in/primitives.yaml",
+        help="Path to primitives YAML config.",
+    )
+    parser.add_argument(
+        "--microbenchmarks-config",
+        type=str,
+        default="in/microbenchmarks.yaml",
+        help="Path to microbenchmarks YAML config.",
+    )
+    parser.add_argument(
+        "--workloads-config",
+        type=str,
+        default="in/workloads.yaml",
+        help="Path to workloads YAML config.",
+    )
+    parser.add_argument(
+        "--perf-events-config",
+        type=str,
+        default="in/perf_events.yaml",
+        help="Path to perf events YAML config.",
+    )
+    parser.add_argument(
+        "--parameters-config",
+        type=str,
+        default="in/input_parameters.yaml",
+        help="Path to run-group input parameters YAML config.",
     )
 
     args = parser.parse_args()
 
     # Store script directory in global variables
     script_globals.script_dir = os.path.dirname(os.path.abspath(__file__))
+    script_globals.perf_path = args.perf_path
 
     return args
 
@@ -185,11 +244,19 @@ def print_args(args: argparse.Namespace):
     log.print_argument("Event Profiling:", str(args.event_profiling))
     log.print_argument("FlameGraph Generation:", str(args.flamegraph_generation))
     log.print_argument("Build:", str(args.build))
+    log.print_argument("Setup Benchmarking:", str(args.setup_benchmarking))
     log.print_argument("Compiler Optimizations:", str(args.compiler_optimizations))
     log.print_argument("Cold Caching:", str(args.cold_caching))
     log.print_argument("CSV Output Name:", str(args.csv_name))
     log.print_argument("Run Group:", str(args.run_group))
+    log.print_argument("Run Group Num Runs:", str(args.num_runs))
     log.print_argument("FHE:", str(args.fhe))
+    log.print_argument("Perf Path:", str(args.perf_path))
+    log.print_argument("Primitives Config:", str(args.primitives_config))
+    log.print_argument("Microbenchmarks Config:", str(args.microbenchmarks_config))
+    log.print_argument("Workloads Config:", str(args.workloads_config))
+    log.print_argument("Perf Events Config:", str(args.perf_events_config))
+    log.print_argument("Input Parameters Config:", str(args.parameters_config))
     log.print_argument("Verbosity:", str(args.verbose))
     print()
     
@@ -212,13 +279,3 @@ def non_negative_integer(x: str) -> int:
     if value < 0:
         log.print_error(f"Value must be a non-negative integer")
     return value
-
-
-def is_boolean(b: str) -> bool:
-    if b.lower() in ["true", "1", "yes"]:
-        return True
-    elif b.lower() in ["false", "0", "no"]:
-        return False
-    else:
-        log.print_error(f"Boolean flags must be either True or False")
-        sys.exit(1)

@@ -21,7 +21,7 @@ def analyze_workload_performance(args: argparse.Namespace) -> None:
     unzip_weights()
     validate_submodules()
 
-    import_workloads()
+    import_workloads(args)
     
     if args.build:
         print_status("Building workload benchmarking application...")
@@ -129,9 +129,9 @@ def validate_submodules():
             raise FileNotFoundError(f"Submodule {path} is not initialized correctly.")
 
 # Import the configured workloads for profiling
-def import_workloads() -> None:
+def import_workloads(args: argparse.Namespace) -> None:
     """Imports workloads from a YAML file."""
-    file_path = utils.get_absolute_path("in/workloads.yaml")
+    file_path = utils.resolve_path(args.workloads_config)
 
     try:
         with open(file_path, "r") as file:
@@ -580,7 +580,7 @@ def run_perf_workload(binary_dir_path: str,command_string: str, event_string: st
     polling_frequency = 1000
 
     cmd: List[str] = [
-        "perf",
+        script_globals.perf_path,
         "record",
         "-o",
         utils.get_absolute_path(os.path.join("out", "temp", "perf.data")),
@@ -606,7 +606,7 @@ def run_perf_workload(binary_dir_path: str,command_string: str, event_string: st
     
     with open(output_file_path, "w") as outfile:
         subprocess.run(
-            ["perf", "report", "--stdio", "-i", utils.get_absolute_path(os.path.join("out", "temp", "perf.data"))],
+            [script_globals.perf_path, "report", "--stdio", "-i", utils.get_absolute_path(os.path.join("out", "temp", "perf.data"))],
             check=True,
             stdout=outfile,
             stderr=outfile,

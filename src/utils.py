@@ -55,6 +55,13 @@ def get_absolute_path(relative_path: str) -> str:
     return os.path.join(get_project_root(), relative_path)
 
 
+def resolve_path(path_value: str) -> str:
+    """Resolves absolute paths directly and project-relative paths from the repo root."""
+    if os.path.isabs(path_value):
+        return path_value
+    return get_absolute_path(path_value)
+
+
 def get_match_value(pattern: str, text: str, default: str = "") -> str:
     """Extracts a matched value using a regex pattern."""
     match = re.search(pattern, text)

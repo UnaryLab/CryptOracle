@@ -12,7 +12,7 @@ from src.logging_utils import print_info, print_error, print_status, print_secti
 
 # Perform setup, runtime analysis, event profiling, flamegraph generation, and results recording for microbenchmarks
 def analyze_microbenchmark_performance(args: argparse.Namespace) -> None:
-    import_microbenchmarks()
+    import_microbenchmarks(args)
     
     if args.build:
         print_status("Building microbenchmark benchmarking application...")
@@ -38,8 +38,8 @@ def analyze_microbenchmark_performance(args: argparse.Namespace) -> None:
 
     microbenchmark_save_csv(args)
     
-def import_microbenchmarks() -> None:
-    file_path = utils.get_absolute_path("in/microbenchmarks.yaml")
+def import_microbenchmarks(args: argparse.Namespace) -> None:
+    file_path = utils.resolve_path(args.microbenchmarks_config)
 
     try:
         with open(file_path, "r") as file:
@@ -407,7 +407,7 @@ def run_perf_microbenchmark(command_string: str, event_string: str, args: argpar
     polling_frequency = 1000
 
     cmd: List[str] = [
-        "perf",
+        script_globals.perf_path,
         "record",
         "-o",
         utils.get_absolute_path(os.path.join("out", "temp", "perf.data")),
@@ -432,7 +432,7 @@ def run_perf_microbenchmark(command_string: str, event_string: str, args: argpar
 
     with open(output_file_path, "w") as outfile:
         subprocess.run(
-            ["perf", "report", "--stdio", "-i", utils.get_absolute_path(os.path.join("out", "temp", "perf.data"))],
+            [script_globals.perf_path, "report", "--stdio", "-i", utils.get_absolute_path(os.path.join("out", "temp", "perf.data"))],
             check=True,
             stdout=outfile,
             stderr=outfile,

@@ -7,6 +7,7 @@ class ScriptGlobals:
         
         # Build & Execution Options
         self.cmake_opts: List[str] = []
+        self.perf_path: str = "perf"
         
         # Primitive Metrics
         self.setup_and_execution_average_time: Dict[str, float] = {}

@@ -34,7 +34,7 @@ def analyze_primitive_performance(args: argparse.Namespace) -> None:
     
 def import_primitives(args: argparse.Namespace) -> None:
     """Imports input functions from a YAML file and updates command-line arguments."""
-    file_path = utils.get_absolute_path("in/primitives.yaml")
+    file_path = utils.resolve_path(args.primitives_config)
 
     try:
         with open(file_path, "r") as file:
@@ -250,7 +250,7 @@ def run_perf(
         polling_frequency = max_polls_per_second
         function_repeats = 1
     cmd: List[str] = [
-        "perf",
+        script_globals.perf_path,
         "record",
         "-o",
         utils.get_absolute_path(os.path.join("out", "temp", "perf.data")),
@@ -288,7 +288,7 @@ def run_perf(
 
     with open(output_file_path, "w") as outfile:
         subprocess.run(
-            ["perf", "report", "--stdio", "-i", utils.get_absolute_path(os.path.join("out", "temp", "perf.data"))],
+            [script_globals.perf_path, "report", "--stdio", "-i", utils.get_absolute_path(os.path.join("out", "temp", "perf.data"))],
             check=True,
             stdout=outfile,
             stderr=outfile,

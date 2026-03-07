@@ -15,7 +15,7 @@ from src.globals import script_globals
 def start_perf(output_path: str) -> subprocess.Popen:
     with open(output_path, "w") as output_file:
         return subprocess.Popen(
-            ["perf", "stat", "-a", "-e", "power/energy-pkg/", "--interval-print", "5"],
+            [script_globals.perf_path, "stat", "-a", "-e", "power/energy-pkg/", "--interval-print", "5"],
             stdout=output_file,
             stderr=output_file,
         )
@@ -87,7 +87,7 @@ def initialize_csv_file(csv_output_file: str, target_items: List[str], args: arg
 
     for target in target_items:
         headers.extend([f"{target} Time", f"{target} Energy", f"{target} Power"])
-        if args.runtime_analysis is True:
+        if args.event_profiling is True:
             headers.extend([f"{target} IPC"]
             + [
                 metric for event in script_globals.perf_events
@@ -124,7 +124,7 @@ def save_results_csv(csv_output_path: str,args: argparse.Namespace, target_items
         csv_row.append(execution_energies.get(target, "N/A"))
         csv_row.append(execution_powers.get(target, "N/A"))
         
-        if (args.runtime_analysis is True):
+        if (args.event_profiling is True):
             csv_row.append(perf_results[target].get("ipc", "N/A"))
             
             for event in script_globals.perf_events:
@@ -143,12 +143,12 @@ def generate_flamegraph(args: argparse.Namespace, target: str, cmd: str, cwd: st
     output_dir: str = utils.get_absolute_path(os.path.join("out", "flamegraphs"))
     os.makedirs(output_dir, exist_ok=True)
 
-    polling_frequency: int = 1000
+    polling_frequency: int = 10000
 
     try:
         subprocess.run(
             [
-                "perf",
+                script_globals.perf_path,
                 "record",
                 "-o",
                 utils.get_absolute_path(os.path.join("out", "temp", "perf.data")),
@@ -166,7 +166,7 @@ def generate_flamegraph(args: argparse.Namespace, target: str, cmd: str, cwd: st
 
         subprocess.run(
             [
-                "perf",
+                script_globals.perf_path,
                 "script",
                 "-i",
                 utils.get_absolute_path(os.path.join("out", "temp", "perf.data")),

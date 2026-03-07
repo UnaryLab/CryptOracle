@@ -10,28 +10,25 @@ from src.globals import script_globals
 
 def setup_env(args: argparse.Namespace) -> None:
     """Sets up the environment by running various configuration and preparation steps."""
-    if args.run_group:
-        script_globals.input_run_parameters = import_run_parameters()
-
     if args.build:
         check_working_directory()
         ensure_git_submodules(args)
-        check_required_commands()
+        check_required_commands(args)
         create_output_directories()
         build_and_install_openfhe(args)
             
     utils.delete_old_files()
     
-    if args.runtime_analysis:
-        import_perf_events()
+    if args.runtime_analysis or args.event_profiling:
+        import_perf_events(args)
 
     utils.configure_multithreading(args)
     log.print_info(f"Using {args.num_threads} threads for OpenMP.")
 
 
-def import_perf_events() -> None:
+def import_perf_events(args: argparse.Namespace) -> None:
     """Imports perf events from a YAML file."""
-    file_path = utils.get_absolute_path("in/perf_events.yaml")
+    file_path = utils.resolve_path(args.perf_events_config)
 
     try:
         with open(file_path, "r") as file:
@@ -53,7 +50,7 @@ def check_perf_event_availability() -> None:
         # perf_event = event.replace("_", "-")
         try:
             result = subprocess.run(
-                ["perf", "list", perf_event],
+                [script_globals.perf_path, "list", perf_event],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
@@ -153,7 +150,7 @@ def ensure_git_submodules(args: argparse.Namespace) -> None:
                 log.print_error(f"Failed to update submodule {submodule}: {e.stderr.decode().strip()}")
 
 
-def check_required_commands() -> None:
+def check_required_commands(args: argparse.Namespace) -> None:
     """Verifies that required commands and system dependencies are installed."""
     required_commands = [
         "git", "cmake", "make", "sed", "autoconf", "gcc", "g++", "libtoolize"
@@ -166,8 +163,11 @@ def check_required_commands() -> None:
     if not utils.package_installed("libgoogle-perftools-dev"):
         log.print_error("Required package libgoogle-perftools-dev is missing.")
 
-    if not utils.command_exists("perf"):
-        log.print_error("perf (linux-tools) is missing. Install linux-tools-generic or linux-tools-$(uname -r).")
+    if not utils.command_exists(args.perf_path):
+        log.print_error(
+            f"perf binary not found or not executable at '{args.perf_path}'. "
+            "Set --perf-path to a valid binary."
+        )
 
     verify_sysctl_settings("/proc/sys/kernel/perf_event_paranoid", -1, "kernel.perf_event_paranoid")
     verify_sysctl_settings("/proc/sys/kernel/kptr_restrict", 0, "kernel.kptr_restrict")
@@ -195,9 +195,9 @@ def create_output_directories() -> None:
         os.makedirs(utils.get_absolute_path(path), exist_ok=True)
         
             
-def import_run_parameters() -> dict:
-    """Imports run parameters from input_parameters.yaml."""
-    file_path = utils.get_absolute_path("in/input_parameters.yaml")
+def import_run_parameters(args: argparse.Namespace) -> dict:
+    """Imports run parameters from the configured input-parameters YAML file."""
+    file_path = utils.resolve_path(args.parameters_config)
 
     try:
         with open(file_path, "r") as file:

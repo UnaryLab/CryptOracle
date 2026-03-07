@@ -38,10 +38,10 @@ CryptoOracle serves as a shared platform to accelerate collaborative progress in
 
 ## Features
 
-* **Benchmarking**: Analyze latency, power consumption, and throughput for FHE primitives, microbenchmarks, and end-to-end workloads.
+* **Benchmarking**: Analyze latency, power consumption, and performance events for FHE primitives, microbenchmarks, and end-to-end workloads.
 * **Performance Profiling**: Generate FlameGraphs and conduct runtime analysis using `perf` tools.
-* **Predictive Modeling**: Rapidly explore configuration spaces with additive or ML-based runtime and energy models.
-* **Configurable Parameters**: Fine-tune CKKS encryption parameters (security standard, ring dimension, depth, batch size, and OpenMP thread count) via intuitive CLI arguments.
+* **Predictive Modeling**: Rapidly conduct design space exploration across different OpenFHE and hardware parameters with performance model.
+* **Configurable Parameters**: Fine-tune OpenFHE CKKS parameters (security standard, ring dimension, depth, batch size, and OpenMP thread count) via intuitive CLI arguments.
 
 ## System Dependencies
 
@@ -61,7 +61,7 @@ CryptoOracle serves as a shared platform to accelerate collaborative progress in
 
 ### System Configuration
 
-Enable privileged performance counters:
+CryptOracle's profiler requires enabling privileged performance counters:
 
 ```bash
 # Temporarily enable counters
@@ -103,29 +103,31 @@ grep -qxF "export LD_LIBRARY_PATH=\"$LIB_DIR:\$LD_LIBRARY_PATH\"" ~/.bashrc || \
 
 ## Python Dependencies
 
-The core benchmarking scripts are pure-Python and require:
+The core benchmarking scripts are pure Python and require:
 
 * **Python ≥ 3.8**
 * `psutil`, `py-cpuinfo`, `GPUtil`, `dmidecode` - hardware discovery
 * `pandas`, `numpy` - data manipulation
-* `matplotlib` - visualization
+* `matplotlib`,`seaborn` - visualization
+* `scikit-learn` - analysis
 * `pyyaml` - structured config files
 
 ### Install Python Dependencies
 
+The recommended usage is setting up a Python virtual environment.
 ```bash
 sudo apt install python3.12-venv -y
 python3 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
-pip install psutil py-cpuinfo GPUtil dmidecode pyyaml pandas numpy matplotlib
+pip install -r requirements.txt
 ```
 
 ## Example Flows
 
 ### 1. Primitive Profiling
 
-1. Configure primitives to be profiling under `in/primitives.yaml`. This contains the list of primitives to be profiled.
+1. Configure primitives to be profiling under `in/primitives.yaml`. 
 2. Configure `in/perf_events.yaml` with the desired performance events to be profiled.
 
 ```bash
@@ -135,7 +137,7 @@ python3 benchmark-main.py \
   --batch-size 12 \
   --depth 10 \
   --num-threads 0 \
-  --run-primitives True \
+  --run-primitives \
   --csv-name example_run
 ```
 
@@ -152,8 +154,8 @@ python3 benchmark-main.py \
   --batch-size 12 \
   --depth 10 \
   --num-threads 0 \
-  --run-primitives True \
-  --run-microbenchmarks True \
+  --run-primitives \
+  --run-microbenchmarks \
   --csv-name example_run
 ```
 
@@ -170,21 +172,22 @@ python3 benchmark-main.py \
   --batch-size 12 \
   --depth 10 \
   --num-threads 0 \
-  --run-workloads True \
-  --flamegraph-generation True \
+  --run-workloads \
+  --flamegraph-generation \
   --csv-name example_run
 ```
 
 Flamegraphs for each workload will be outputted to the `out/flamegraphs/` directory.
 
 ### 4. Primitive Profiling using Group Runs
-This repository also allows for the generation of full datasets with sweeps across different security and hardware parameters, such as ring dimension and thread count, respectively. The configuration file under `in/input_parameters.yaml` allows users to specify the security and hardware parameters that they would like to sweep, and `util/run_group.py` automatically generates and runs all valid parameter combinations through the hardware profiler. 
+This repository also allows for generation of full datasets with sweeps across security and hardware parameters. The configuration file under `in/input_parameters.yaml` controls sweep values.
 
 ```bash
-python3 util/run_group.py \
+python3 benchmark-main.py \
+  --run-group \
   --num-runs 5 \
-  --run-primitives True \
-  --run-microbenchmarks True \
+  --run-primitives \
+  --run-microbenchmarks \
   --csv-name example_run
 ```
 
@@ -208,30 +211,27 @@ Performance model scripts and configuration files are located under `perf-model/
 | `-k, --run-microbenchmarks`     | `False`     | Run microbenchmarks                                                          |
 | `-w, --run-workloads`           | `False`     | Run full workloads                                                           |
 | `-r, --runtime-analysis`        | `True`      | Collect latency & power metrics                                              |
+| `--no-runtime-analysis`         |             | Disable runtime analysis                                                     |
 | `-e, --event-profiling`         | `True`      | Collect performance event metrics                                            |
+| `--no-event-profiling`          |             | Disable performance event metrics                                            |
 | `-f, --flamegraph-generation`   | `False`     | Generate FlameGraphs                                                         |
 | `--build`                       | `True`      | (Re)build project before running                                             |
-| `-o, --compiler-optimizations`  | `True`      | Enable compiler optimizations                                                |
+| `--no-build`                    |             | Skip build/rebuild                                                           |
+| `--compiler-optimizations`      | `True`      | Enable compiler optimizations                                                |
+| `--no-compiler-optimizations`   |             | Disable compiler optimizations                                               |
 | `--cold-caching`                | `True`      | Cold-cache primitive profiling                                               |
+| `--no-cold-caching`             |             | Disable cold-cache primitive profiling                                       |
 | `-c, --csv-name`                | `""`        | Output file suffix (`<level>-results-<csv>.csv`)                             |
 | `-g, --run-group`               | `False`     | Internal flag used by the run_group.py script                                |
+| `--num-runs`                    | `1`         | Number of runs per parameter set in run-group mode                           |
 | `--fhe`                         | `False`     | Enable FHE mode (required for bootstrapping primitive)                       |
 | `-v, --verbose`                 | `False`     | Verbose logging                                                              |
-| `-h, --help`                    |             | Show help message                                                            |
-
-### `run_group.py` CLI argument reference
-
-| **Arg**                         | **Default** | **Description**                                                              |
-| ------------------------------- | ----------- | ---------------------------------------------------------------------------- |
-| `-b, --build`                   | `True`      | Toggle build/rebuild (including checks)                                      |
-| `-n, --num-runs`                | `1`         | Number of runs for each parameter combination                                |
-| `-p, --run-primitives`          | `False`     | Run primitive-level benchmarks                                               |
-| `-k, --run-microbenchmarks`     | `False`     | Run microbenchmarks                                                          |
-| `-w, --run-workloads`           | `False`     | Run full workloads                                                           |
-| `-e, --event-profiling`         | `True`      | Collect performance event metrics                                            |
-| `--fhe`                         | `False`     | Enable FHE mode (required for bootstrapping primitive)                       |
-| `-c, --csv-name`                | `""`        | Output file suffix (`<level>-results-<csv>.csv`)                             |
-| `-v, --verbose`                 | `False`     | Verbose logging                                                              |
+| `--perf-path`                   | kernel/tool specific | Path to perf binary                                             |
+| `--primitives-config`           | `in/primitives.yaml` | Path to primitives config YAML                                     |
+| `--microbenchmarks-config`      | `in/microbenchmarks.yaml` | Path to microbenchmark config YAML                              |
+| `--workloads-config`            | `in/workloads.yaml` | Path to workload config YAML                                       |
+| `--perf-events-config`          | `in/perf_events.yaml` | Path to perf events config YAML                                  |
+| `--parameters-config`     | `in/input_parameters.yaml` | Path to group-run parameter YAML                            |
 | `-h, --help`                    |             | Show help message                                                            |
 
 ## Further Documentation

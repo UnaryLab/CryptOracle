@@ -1,1 +1,1 @@
-python3 perf-model/perf-model.py --config ae-config/matmul-perf-model-config.yaml --output-dir ispass-plots
+python3 perf-model/perf-model.py --config ae-config/matmul-perf-model-config.yaml --output-dir ae-plots

@@ -1,0 +1,10 @@
+psutil
+py-cpuinfo
+GPUtil
+dmidecode
+PyYAML
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn

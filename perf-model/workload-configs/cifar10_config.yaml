@@ -1,5 +1,5 @@
 ### Application Information ###
-name: "cifar10" # Name of the application from the CSV
+name: "cifar10" # Name of the application from the CSV (case sensitive)
 description: "Cifar10 inference implementation using CKKS scheme with plaintext weights" # Description of the application
 title: "cifar10" # Title to be used in the plot
 event_type: "Time" # Event type being esimated
@@ -15,7 +15,7 @@ parameters:
   depth: 10
   num_threads: 8
 
-### Application Homomorphic Operation Counts ###
+### Application OpenFHE Primitive Counts ###
 operation_counts:
   CKKS_Add: 47
   CKKS_Add_Plaintext: 2
@@ -25,5 +25,5 @@ operation_counts:
   CKKS_Mult_Plaintext: 33
   CKKS_Rotate: 33
 
-### Statistical Methods ###
-statistic: "median" # Options: median, mean
+### Statistical Method (Options: mean, median) ###
+statistic: "median"

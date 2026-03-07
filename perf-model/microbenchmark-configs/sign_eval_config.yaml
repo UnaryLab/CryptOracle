@@ -1,5 +1,5 @@
 ### Application Information ###
-name: "sign_eval" # Name of the application from the CSV
+name: "sign_eval" # Name of the application from the CSV (case sensitive)
 description: "Sign evaluation implementation using CKKS scheme" # Description of the application
 title: "sign_eval" # Title to be used in the plot
 event_type: "Time" # Event type being esimated
@@ -15,7 +15,7 @@ parameters:
   depth: 10
   num_threads: sweep
 
-### Application Homomorphic Operation Counts ###
+### Application OpenFHE Primitive Counts ###
 operation_counts:
   CKKS_Add: 519
   CKKS_Sub: 310
@@ -24,5 +24,5 @@ operation_counts:
   CKKS_Mult_Scalar: 61 
   CKKS_Chebyshev_Series: 1 
 
-### Statistical Methods ###
-statistic: "median" # Options: median, mean
+### Statistical Method (Options: mean, median) ###
+statistic: "median"

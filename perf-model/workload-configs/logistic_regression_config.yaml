@@ -1,5 +1,5 @@
 ### Application Information ###
-name: "logistic_regression" # Name of the application from the CSV
+name: "logistic_regression" # Name of the application from the CSV (case sensitive)
 description: "Logistic regression training implementation using CKKS scheme" # Description of the application
 title: "logistic_regression" # Title to be used in the plot
 event_type: "Time" # Event type being esimated
@@ -15,7 +15,7 @@ parameters:
   depth: 14
   num_threads: 1
 
-### Application Homomorphic Operation Counts ###
+### Application OpenFHE Primitive Counts ###
 operation_counts:
   CKKS_Mult_Plaintext: 40
   CKKS_Add: 39
@@ -25,5 +25,5 @@ operation_counts:
   CKKS_Mult: 9
   CKKS_Logistic: 10
 
-### Statistical Methods ###
-statistic: "median" # Options: median, mean
+### Statistical Method (Options: mean, median) ###
+statistic: "median"

@@ -1,15 +1,54 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import numpy as np
 import seaborn as sns
 from pathlib import Path
 import sys
 import argparse
 import yaml
+from datetime import datetime
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 sys.path.append(str(Path(__file__).parent.parent))
-from src.logging_utils import print_status, print_error
+from src.logging_utils import (
+    print_argument,
+    print_cryptoracle_banner,
+    print_error,
+    print_section_header,
+    print_status,
+    print_timestamp,
+)
+
+BASE_TEXTWIDTH = 6.5
+FIG_WIDTH = BASE_TEXTWIDTH * 0.50
+FIG_HEIGHT = BASE_TEXTWIDTH * 0.30
+FONT_SIZE = 8
+TITLE_SIZE = 8
+TICK_SIZE = 8
+LEGEND_SIZE = 7
+
+
+def apply_paper_plot_style() -> None:
+    """Apply compact, paper-style plotting defaults."""
+    plt.rcParams.update(
+        {
+            "font.size": FONT_SIZE,
+            "axes.titlesize": TITLE_SIZE,
+            "axes.labelsize": FONT_SIZE,
+            "xtick.labelsize": TICK_SIZE,
+            "ytick.labelsize": TICK_SIZE,
+            "legend.fontsize": LEGEND_SIZE,
+        }
+    )
+
+
+def save_plot(fig: plt.Figure, path: Path) -> None:
+    """Save plots with paper-like tight spacing."""
+    fig.tight_layout()
+    fig.savefig(path, bbox_inches="tight", pad_inches=0)
+    plt.close(fig)
+
 
 def parse_arguments():
     """Parse command line arguments."""
@@ -22,10 +61,45 @@ def parse_arguments():
                         help='Directory to save output plots and CSV files')
     return parser.parse_args()
 
+
+def print_cli_summary(args: argparse.Namespace) -> None:
+    """Print command line inputs using CryptOracle terminal formatting."""
+    print_section_header("Performance Model Inputs")
+    print_argument("Config File:", str(Path(args.config).expanduser()))
+    print_argument("Output Directory:", str(Path(args.output_dir).expanduser()))
+    print()
+
+
+def print_model_summary(config: dict) -> None:
+    """Print key model settings from config."""
+    print_section_header("Model Configuration")
+    print_argument("Application:", str(config["name"]))
+    print_argument("Statistic:", str(config["statistic"]))
+    print_argument("Primitive CSV:", str(config["primitive_benchmarks"]))
+    print_argument("Actual CSV:", str(config["actual_benchmarks"]))
+    print_argument("Operation Count:", str(len(config["operation_counts"])))
+    print()
+
+
+def print_estimation_breakdown(estimated_df: pd.DataFrame, operation_counts: dict) -> None:
+    """Print per-configuration data-point counts and estimated runtime."""
+    print_section_header("Estimation Breakdown")
+    for _, row in estimated_df.iterrows():
+        print_argument("Security Level:", str(row["security_standard_level"]))
+        print_argument("N:", str(int(row["n"])))
+        for operation in operation_counts.keys():
+            count_col = f"{operation}_count"
+            if count_col in row:
+                print_argument(f"{operation} Samples:", str(int(row[count_col])))
+        print_argument("Estimated Runtime (s):", f"{row['estimated_time']:.3f}")
+        print()
+
+
 def load_config(config_path):
     """Load and validate configuration from YAML file."""
     try:
-        with open(config_path, 'r') as f:
+        config_path = Path(config_path).expanduser().resolve()
+        with config_path.open('r') as f:
             config = yaml.safe_load(f)
         
         required_fields = ['name', 'primitive_benchmarks', 'actual_benchmarks', 
@@ -37,6 +111,15 @@ def load_config(config_path):
         
         if config['statistic'] not in ['mean', 'median']:
             raise ValueError("statistic must be either 'mean' or 'median'")
+
+        # Resolve CSV paths relative to the config file location.
+        # Absolute paths are preserved as-is.
+        config_dir = config_path.parent
+        for field in ['primitive_benchmarks', 'actual_benchmarks']:
+            field_path = Path(config[field]).expanduser()
+            if not field_path.is_absolute():
+                field_path = (config_dir / field_path).resolve()
+            config[field] = str(field_path)
         
         return config
     except Exception as e:
@@ -114,7 +197,7 @@ def plot_estimated_runtimes(results_df, config, output_dir):
     plt.style.use('seaborn-v0_8')
     sns.set_palette("husl")
     
-    fig1, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10))
+    fig1, (ax1, ax2) = plt.subplots(2, 1, figsize=(FIG_WIDTH * 1.4, FIG_HEIGHT * 2.2))
     
     sec_standards_data = results_df[
         (results_df['security_standard_level'].isin(['128c', '192c', '256c'])) & 
@@ -138,16 +221,19 @@ def plot_estimated_runtimes(results_df, config, output_dir):
     ax2.set_ylabel('Time Contribution (s)')
     ax2.set_xlabel('Security Standard Level')
     
-    plt.tight_layout()
-    
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     
     security_plot_path = output_dir / f"estimated_{config['title']}_security_{config['statistic']}.png"
-    fig1.savefig(security_plot_path)
+    for axis in (ax1, ax2):
+        axis.grid(True, alpha=0.3)
+        axis.yaxis.set_major_locator(ticker.MaxNLocator(nbins=4))
+        axis.yaxis.set_minor_locator(ticker.AutoMinorLocator(2))
+        axis.ticklabel_format(axis='y', style='scientific', scilimits=(0, 0))
+    save_plot(fig1, security_plot_path)
     print_status(f"Security standards comparison saved to {security_plot_path}")
     
-    fig2, (ax3, ax4) = plt.subplots(2, 1, figsize=(12, 10))
+    fig2, (ax3, ax4) = plt.subplots(2, 1, figsize=(FIG_WIDTH * 1.4, FIG_HEIGHT * 2.2))
  
     n_values_data = results_df[results_df['security_standard_level'] == 'none']
     
@@ -167,10 +253,13 @@ def plot_estimated_runtimes(results_df, config, output_dir):
     ax4.set_ylabel('Time Contribution (s)')
     ax4.set_xlabel('n')
     
-    plt.tight_layout()
-    
     n_plot_path = output_dir / f"estimated_{config['title']}_n_{config['statistic']}.png"
-    fig2.savefig(n_plot_path)
+    for axis in (ax3, ax4):
+        axis.grid(True, alpha=0.3)
+        axis.yaxis.set_major_locator(ticker.MaxNLocator(nbins=4))
+        axis.yaxis.set_minor_locator(ticker.AutoMinorLocator(2))
+        axis.ticklabel_format(axis='y', style='scientific', scilimits=(0, 0))
+    save_plot(fig2, n_plot_path)
     print_status(f"N values comparison saved to {n_plot_path}")
 
 def load_and_process_data(actual_csv, estimated_csv, config):
@@ -210,54 +299,84 @@ def calculate_statistics(df):
     
     return stats
 
+def print_reduced_statistics(stats: dict, indent: str = "") -> None:
+    """Print only the metrics used in artifact-evaluation reporting."""
+    num_samples = int(stats["Number of Samples"])
+    mean_relative_error = stats["Mean Relative Error (%)"]
+    if indent:
+        print(f"{indent}Number of Samples: {num_samples}")
+    else:
+        print_argument("Number of Samples:", str(num_samples))
+    if pd.isna(mean_relative_error):
+        if indent:
+            print(f"{indent}Mean Relative Error (%): undefined (needs more samples)")
+        else:
+            print_argument("Mean Relative Error (%):", "undefined (needs more samples)")
+    else:
+        if indent:
+            print(f"{indent}Mean Relative Error (%): {mean_relative_error:.4f}")
+        else:
+            print_argument("Mean Relative Error (%):", f"{mean_relative_error:.4f}")
+
 def plot_comparison(df, config, output_dir):
     df = df[df['n'] != 12]
 
-    plt.figure(figsize=(12, 8))
+    fig, ax = plt.subplots(figsize=(FIG_WIDTH * 1.6, FIG_HEIGHT * 1.5))
 
     none_df = df[df['security_standard_level'] == 'none']
     other_df = df[df['security_standard_level'] != 'none']
 
     if not none_df.empty:
-        plt.plot(none_df['n'], none_df['actual_time'], marker='o', label='n (Actual)')
-        plt.plot(none_df['n'], none_df['estimated_time'], marker='s', linestyle='--', label='n (Estimated)')
+        ax.plot(none_df['n'], none_df['actual_time'], marker='o', linewidth=1.2, markersize=3, label='n (Actual)')
+        ax.plot(none_df['n'], none_df['estimated_time'], marker='s', linestyle='--', linewidth=1.2, markersize=3, label='n (Estimated)')
         
         for _, row in none_df.iterrows():
             percent_error = abs((row['estimated_time'] - row['actual_time']) / row['actual_time']) * 100
             mid_point = (row['actual_time'] + row['estimated_time']) / 2
-            plt.vlines(row['n'], row['actual_time'], row['estimated_time'], 
-                      colors='gray', linestyles='dotted', alpha=0.5)
+            ax.vlines(row['n'], row['actual_time'], row['estimated_time'], 
+                      colors='gray', linestyles='dotted', alpha=0.5, linewidth=0.8)
             
-            plt.text(row['n'], mid_point, f'{percent_error:.1f}%', 
-                    ha='center', va='center', fontsize=8)
+            # ax.text(row['n'], mid_point, f'{percent_error:.1f}%', 
+            #         ha='center', va='center', fontsize=8)
 
     for security_level in other_df['security_standard_level'].unique():
         subset = df[df['security_standard_level'] == security_level]
-        plt.plot(subset['n'], subset['actual_time'], marker='o', label=f'{security_level} (Actual)')
-        plt.plot(subset['n'], subset['estimated_time'], marker='s', linestyle='--', 
+        ax.plot(subset['n'], subset['actual_time'], marker='o', linewidth=1.2, markersize=3, label=f'{security_level} (Actual)')
+        ax.plot(subset['n'], subset['estimated_time'], marker='s', linestyle='--', linewidth=1.2, markersize=3,
                  label=f'{security_level} (Estimated)')
         
         for _, row in subset.iterrows():
             percent_error = abs((row['estimated_time'] - row['actual_time']) / row['actual_time']) * 100
             mid_point = (row['actual_time'] + row['estimated_time']) / 2
-            plt.vlines(row['n'], row['actual_time'], row['estimated_time'], 
-                      colors='gray', linestyles='dotted', alpha=0.5)
+            ax.vlines(row['n'], row['actual_time'], row['estimated_time'], 
+                      colors='gray', linestyles='dotted', alpha=0.5, linewidth=0.8)
 
-            plt.text(row['n'], mid_point, f'{percent_error:.1f}%', 
-                    ha='center', va='center', fontsize=8)
+            # ax.text(row['n'], mid_point, f'{percent_error:.1f}%', 
+            #         ha='center', va='center', fontsize=8)
 
-    plt.xlabel('n')
-    plt.ylabel('Time (s)')
-    plt.title(f'Estimated vs Actual Runtime for values of n ({config["name"]})')
-    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-    plt.grid(True, alpha=0.3)
+    ax.set_xlabel('Ring Dimension (n)')
+    ax.set_ylabel('Runtime (s)')
+    ax.set_title(f'Estimated vs Actual Runtime ({config["name"]})', pad=3)
+    ax.legend(
+        loc='lower center',
+        bbox_to_anchor=(0.5, 1.02),
+        ncol=2,
+        frameon=False,
+        handlelength=1.2,
+        labelspacing=0.2,
+        columnspacing=0.8,
+    )
+    ax.grid(True, alpha=0.3)
+    ax.yaxis.set_major_locator(ticker.MaxNLocator(nbins=4))
+    ax.yaxis.set_minor_locator(ticker.AutoMinorLocator(2))
+    ax.ticklabel_format(axis='y', style='scientific', scilimits=(0, 0))
     
-    plt.xticks(range(13, 18))
+    ax.set_xticks(range(13, 18))
     
-    plt.tight_layout()
-    comparison_plot_path = output_dir + f"/{config['title']}_analysis.png"
-    plt.savefig(comparison_plot_path)
+    comparison_plot_path = output_dir / f"{config['title']}_analysis.png"
+    save_plot(fig, comparison_plot_path)
     print_status(f"Estimated vs actual runtime comparison saved to {comparison_plot_path}")
+    return comparison_plot_path
 
 def analyze_operation_contributions(df, config, output_dir):
     contribution_cols = [f'{op}_contribution' for op in config['operation_counts'].keys()]
@@ -266,7 +385,7 @@ def analyze_operation_contributions(df, config, output_dir):
     for col in contribution_cols:
         df[f'{col}_percent'] = df[col] / df['total_estimated'] * 100
     
-    plt.figure(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(FIG_WIDTH * 1.8, FIG_HEIGHT * 1.35))
     bottom = np.zeros(len(df))
     
     x_labels = []
@@ -277,94 +396,103 @@ def analyze_operation_contributions(df, config, output_dir):
             x_labels.append(f"{row['security_standard_level']}\nn={row['n']}")
     
     for col in contribution_cols:
-        plt.bar(range(len(df)), df[f'{col}_percent'], bottom=bottom, 
-                label=col.replace('_contribution', ''))
+        ax.bar(
+            range(len(df)),
+            df[f'{col}_percent'],
+            bottom=bottom,
+            label=col.replace('_contribution', ''),
+            width=0.7,
+        )
         bottom += df[f'{col}_percent']
     
-    plt.xticks(range(len(df)), x_labels, rotation=45)
-    plt.ylabel('Contribution (%)')
-    plt.title(f'Operation Type Contributions to Estimated Runtime ({config["name"]})')
-    plt.legend()
-    plt.tight_layout()
-    operation_contributions_plot_path = output_dir + f"{config['title']}_operation_contributions.png"
-    plt.savefig(operation_contributions_plot_path)
+    ax.set_xticks(range(len(df)))
+    ax.set_xticklabels(x_labels, rotation=25, ha='right')
+    ax.set_ylabel('Contribution (%)')
+    ax.set_title(f'Estimated Runtime Contribution Breakdown ({config["name"]})', pad=3)
+    ax.set_ylim(0, 102)
+    ax.grid(True, axis='y', alpha=0.3)
+    ax.yaxis.set_major_locator(ticker.MaxNLocator(nbins=4))
+    ax.yaxis.set_minor_locator(ticker.AutoMinorLocator(2))
+    ax.legend(
+        loc='lower center',
+        bbox_to_anchor=(0.5, 1.02),
+        ncol=2,
+        frameon=False,
+        handlelength=1.2,
+        labelspacing=0.2,
+        columnspacing=0.8,
+    )
+    operation_contributions_plot_path = output_dir / f"{config['title']}_operation_contributions.png"
+    save_plot(fig, operation_contributions_plot_path)
     print_status(f"Operation type contributions saved to {operation_contributions_plot_path}")
+    return operation_contributions_plot_path
     
 def main():
+    start_time = datetime.now()
     args = parse_arguments()
+    output_dir = Path(args.output_dir).expanduser().resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
+    apply_paper_plot_style()
+
+    print_cryptoracle_banner()
+    print_cli_summary(args)
+
     config = load_config(args.config)
+    print_model_summary(config)
     
     print_status(f"Loading primitive results from {config['primitive_benchmarks']}")
     primitive_df = load_primitive_results(config['primitive_benchmarks'], config)
 
     print_status(f"\nCalculating estimated runtimes using {config['statistic']}")
     estimated_df = calculate_estimated_runtime(primitive_df, config['operation_counts'], config['statistic'])
+    print_estimation_breakdown(estimated_df, config["operation_counts"])
 
-    print_status("\nNumber of data points used for each calculation:")
-    for _, row in estimated_df.iterrows():
-        sec_level = row['security_standard_level']
-        n_value = row['n']
-        print(f"\nSecurity Level: {sec_level}, n: {n_value}")
-        for operation in config['operation_counts'].keys():
-            count_col = f'{operation}_count'
-            if count_col in row:
-                print(f"  {operation}: {row[count_col]} data points")
-        print(f"  Estimated Runtime: {row['estimated_time']:.3f} s")
-
-    output_dir = Path(args.output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / f'estimated_{config["title"]}_{config["statistic"]}.csv'
     estimated_df.to_csv(output_path, index=False)
     print_status(f"Estimated runtimes saved to {output_path}")
     
     print_status("Generating plots")
-    # plot_estimated_runtimes(estimated_df, config, args.output_dir)
 
     df = load_and_process_data(config['actual_benchmarks'], output_path, config)
     
     stats = calculate_statistics(df)
-    print("\nOverall Statistical Analysis:")
-    for metric, value in stats.items():
-        if metric == 'Number of Samples':
-            print(f"{metric}: {int(value)}")
-        elif pd.isna(value):
-            print(f"{metric}: undefined (needs more samples)")
-        else:
-            print(f"{metric}: {value:.4f}")
+    print_section_header("Overall Statistical Analysis")
+    print_reduced_statistics(stats)
+    print()
     
-    plot_comparison(df, config, args.output_dir)
-    analyze_operation_contributions(df, config, args.output_dir)
+    comparison_plot_path = plot_comparison(df, config, output_dir)
+    operation_contributions_plot_path = analyze_operation_contributions(df, config, output_dir)
     
     none_df = df[df['security_standard_level'] == 'none']
     other_df = df[df['security_standard_level'] != 'none']
     
     if not none_df.empty:
-        print("\nAnalysis for n values (security_level = none):")
+        print_section_header("Analysis for n values (security_level = none)")
         for n_value in sorted(none_df['n'].unique()):
             subset = none_df[none_df['n'] == n_value]
             subset_stats = calculate_statistics(subset)
-            print(f"\nn = {n_value}:")
-            for metric, value in subset_stats.items():
-                if metric == 'Number of Samples':
-                    print(f"  {metric}: {int(value)}")
-                elif pd.isna(value):
-                    print(f"  {metric}: undefined (needs more samples)")
-                else:
-                    print(f"  {metric}: {value:.4f}")
+            print_argument("N:", str(int(n_value)))
+            print_reduced_statistics(subset_stats, indent="  ")
+            print()
     
     if not other_df.empty:
-        print("\nAnalysis by Security Level:")
+        print_section_header("Analysis by Security Level")
         for security_level in sorted(other_df['security_standard_level'].unique()):
             subset = other_df[other_df['security_standard_level'] == security_level]
             subset_stats = calculate_statistics(subset)
-            print(f"\n{security_level}:")
-            for metric, value in subset_stats.items():
-                if metric == 'Number of Samples':
-                    print(f"  {metric}: {int(value)}")
-                elif pd.isna(value):
-                    print(f"  {metric}: undefined (needs more samples)")
-                else:
-                    print(f"  {metric}: {value:.4f}")
+            print_argument("Security Level:", str(security_level))
+            print_reduced_statistics(subset_stats, indent="  ")
+            print()
+
+    end_time = datetime.now()
+    print_section_header("Summary")
+    print_argument("Estimated CSV:", str(output_path))
+    print_argument("Comparison Plot:", str(comparison_plot_path))
+    print_argument("Contributions Plot:", str(operation_contributions_plot_path))
+    print_argument("Samples Analyzed:", str(len(df)))
+    print_argument("Mean Relative Error (%):", f"{stats['Mean Relative Error (%)']:.4f}")
+    print()
+    print_timestamp(f"Performance model completed in {(end_time - start_time).total_seconds():.3f} seconds.")
                     
 if __name__ == "__main__":
     main()

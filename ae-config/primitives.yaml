@@ -1,0 +1,6 @@
+primitives:
+  - "CKKS_Add"
+  - "CKKS_Add_Plaintext"
+  - "CKKS_Mult"
+  - "CKKS_Mult_Plaintext"
+  - "CKKS_Rotate"

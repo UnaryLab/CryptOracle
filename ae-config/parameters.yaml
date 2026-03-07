@@ -1,0 +1,19 @@
+security_standard_level:
+- none
+
+n: 
+- 16
+
+depth:
+  - 10
+
+batch_size:
+  - 12
+
+num_threads:
+  - 1
+  - 2
+  - 4
+  - 8
+  - 16
+  - 32

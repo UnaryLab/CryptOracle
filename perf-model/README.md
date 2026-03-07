@@ -6,10 +6,10 @@ The **CryptOracle Performance Model** is a lightweight analytic tool for estimat
 
 ## Key Features
 
-* 📈 **Performance Estimation**: Predicts application runtime using primitive operation benchmarks
-* 🔍 **Comparison**: Visualizes estimated vs. actual performance across parameter sets
-* 🧩 **Operation Breakdown**: Shows performance contributions by operation type
-* 🔒 **Flexible Parameters**: Supports different security standards and configuration options
+* **Performance Estimation**: Predicts application runtime using primitive operation benchmarks
+* **Comparison**: Visualizes estimated vs. actual performance across parameter sets
+* **Operation Breakdown**: Shows performance contributions by operation type
+* **Flexible Parameters**: Supports different security standards and configuration options
 
 ---
 

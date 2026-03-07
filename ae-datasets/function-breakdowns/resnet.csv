@@ -1,0 +1,10 @@
+Function,Sample Count,Percentage of Time (%)
+EvalAdd,24340558213,1.97
+EvalBootstrap,576184985590,46.71
+EvalChebyshevFunction,75565836547,6.13
+EvalFastRotatePrecompute,0,0.00
+EvalRotate,149366738697,12.11
+EvalFastRotate,0,0.00
+EvalAddMany,0,0.00
+EvalMult,247353896896,20.05
+other,0,0.00

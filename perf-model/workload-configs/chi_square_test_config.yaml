@@ -1,5 +1,5 @@
 ### Application Information ###
-name: "chi_square_test" # Name of the application from the CSV
+name: "chi_square_test" # Name of the application from the CSV (case sensitive)
 description: "Chi square test implementation using CKKS scheme" # Description of the application
 title: "chi_square_test" # Title to be used in the plot
 event_type: "Energy" # Event type being esimated
@@ -15,7 +15,7 @@ parameters:
   depth: 3
   num_threads: sweep
 
-### Application Homomorphic Operation Counts ###
+### Application OpenFHE Primitive Counts ###
 operation_counts:
   CKKS_MultNoRelin: 207
   CKKS_Add: 598
@@ -24,5 +24,5 @@ operation_counts:
   CKKS_Sub: 7
   CKKS_Mult_Scalar: 3
 
-### Statistical Methods ###
-statistic: "median" # Options: median, mean
+### Statistical Method (Options: mean, median) ###
+statistic: "median"

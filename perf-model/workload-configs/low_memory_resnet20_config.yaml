@@ -1,5 +1,5 @@
 ### Application Information ###
-name: "low_memory_resnet20" # Name of the application from the CSV
+name: "low_memory_resnet20" # Name of the application from the CSV (case sensitive)
 description: "Low memory resnet20 inference implementation using CKKS scheme" # Description of the application
 title: "resnet" # Title to be used in the plot
 event_type: "Time" # Event type being esimated
@@ -15,7 +15,7 @@ parameters:
   depth: 10
   num_threads: sweep
 
-### Application Homomorphic Operation Counts ###
+### Application OpenFHE Primitive Counts ###
 operation_counts:
   CKKS_Add: 6845
   CKKS_Add_Plaintext: 24
@@ -26,5 +26,5 @@ operation_counts:
   CKKS_Rotate: 1218
   CKKS_Fast_Rotate: 152
 
-### Statistical Methods ###
-statistic: "median" # Options: median, mean
+### Statistical Method (Options: mean, median) ###
+statistic: "median"

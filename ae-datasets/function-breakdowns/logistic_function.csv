@@ -1,0 +1,7 @@
+Function,Sample Count,Percentage of Time (%)
+EvalMult,25649704363,71.66
+EvalAdd,378775892,1.06
+EvalSub,3108277995,8.68
+EvalSquare,2042224817,5.71
+EvalChebyshevSeries,4613629275,12.89
+other,0,0.00

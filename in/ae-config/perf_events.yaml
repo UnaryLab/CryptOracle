@@ -1,0 +1,5 @@
+perf_events:
+  - "instructions"
+  - "cpu-cycles"
+  - "cache-references"
+  - "cache-misses"

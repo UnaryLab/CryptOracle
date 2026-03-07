@@ -222,7 +222,7 @@ Performance model scripts and configuration files are located under `perf-model/
 | `--cold-caching`                | `True`      | Cold-cache primitive profiling                                               |
 | `--no-cold-caching`             |             | Disable cold-cache primitive profiling                                       |
 | `-c, --csv-name`                | `""`        | Output file suffix (`<level>-results-<csv>.csv`)                             |
-| `-g, --run-group`               | `False`     | Internal flag used by the run_group.py script                                |
+| `-g, --run-group`               | `False`     | Enable profiling against a batch of different parameter combinations                                |
 | `--num-runs`                    | `1`         | Number of runs per parameter set in run-group mode                           |
 | `--fhe`                         | `False`     | Enable FHE mode (required for bootstrapping primitive)                       |
 | `-v, --verbose`                 | `False`     | Verbose logging                                                              |

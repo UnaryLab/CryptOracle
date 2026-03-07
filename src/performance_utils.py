@@ -143,7 +143,7 @@ def generate_flamegraph(args: argparse.Namespace, target: str, cmd: str, cwd: st
     output_dir: str = utils.get_absolute_path(os.path.join("out", "flamegraphs"))
     os.makedirs(output_dir, exist_ok=True)
 
-    polling_frequency: int = 10000
+    polling_frequency: int = 5000
 
     try:
         subprocess.run(

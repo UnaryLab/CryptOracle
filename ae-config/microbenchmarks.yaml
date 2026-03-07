@@ -1,2 +1,2 @@
 microbenchmarks:
-  - logistic_function
+  - matrix_multiplication

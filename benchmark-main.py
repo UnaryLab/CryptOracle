@@ -1,36 +1,4 @@
-# Dependencies:
-#   System dependencies:
-#       - git: For cloning and managing repositories.
-#       - cmake: For building the software.
-#       - autoconf: Essential for generating configuration scripts.
-#       - build-essential: Installs the compiler and related tools.
-#       - libtool: Necessary for compiling, linking, and managing shared libraries.
-#       - libgoogle-perftools-dev: Provides the tcmalloc library for performance improvements.
-#       - linux-tools-$(uname -r): For performance analysis, specific to the running kernel version.
-#       - linux-tools-generic: Provides a generic Linux tools package.
-#       - python3-dev: Includes development headers needed for building Python modules.
-#       - python3-pip: For installing and managing Python packages.
-#       - sysctl configuration change: Required to adjust security settings for performance monitoring.
-#   Install commands (System):
-#       sudo apt-get update -y
-#       sudo apt-get upgrade -y
-#       sudo apt install -y git cmake autoconf build-essential libtool libgoogle-perftools-dev python3-dev python3-pip
-#       sudo apt-get install -y linux-tools-$(uname -r) linux-tools-generic
-#       # Adjust /proc/sys/kernel/perf_event_paranoid setting for performance monitoring
-#       echo -1 | sudo tee /proc/sys/kernel/perf_event_paranoid && echo "kernel.perf_event_paranoid = -1" | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
-#   Python dependencies:
-#       - Python 3.x
-#       - Pandas: For data manipulation and analysis
-#       - Numpy: For numerical computations
-#       - Matplotlib: For generating plots
-#       - CSV: For writing to CSV files
-#       - Random: For shuffling training data
-#   Install commands (Python):
-#       pip3 install pandas numpy matplotlib
-#
-# Further OpenFHE Documentation: https://openfhe-development.readthedocs.io/en/latest/index.html
-#
-# TODO: ANON REMOVAL
+"""Entry point for CryptOracle benchmarking and profiling workflows."""
 
 import argparse
 from datetime import datetime

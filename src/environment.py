@@ -43,6 +43,18 @@ def import_perf_events(args: argparse.Namespace) -> None:
 
 def check_perf_event_availability() -> None:
     """Checks if the required CPU performance events are supported."""
+    try:
+        subprocess.run(
+            [script_globals.perf_path, "--version"],
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        error_details = e.stderr.strip() if e.stderr else "unknown error"
+        log.print_error(error_details)
+
     unsupported_events = []
 
     # Check each event using 'perf list' and store unsupported ones

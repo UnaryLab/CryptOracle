@@ -28,13 +28,7 @@ CryptoOracle is composed of three tightly-integrated pillars:
 
 ---  
 
-CryptoOracle serves as a shared platform to accelerate collaborative progress in FHE applications, algorithms, software, and hardware. Clone the repo, run the benchmarks, and join the effort!  
-
-<!-- ### Clone the Repository  
-
-```bash
-# TODO: ANON REMOVAL
-```` -->
+CryptoOracle serves as a shared platform to accelerate collaborative progress in FHE applications, algorithms, software, and hardware. Clone the repo, run the benchmarks, and join the effort!
 
 ## Features
 
@@ -105,7 +99,7 @@ grep -qxF "export LD_LIBRARY_PATH=\"$LIB_DIR:\$LD_LIBRARY_PATH\"" ~/.bashrc || \
 
 The core benchmarking scripts are pure Python and require:
 
-* **Python ≥ 3.8**
+* **Python ≥ 3.9**
 * `psutil`, `py-cpuinfo`, `GPUtil`, `dmidecode` - hardware discovery
 * `pandas`, `numpy` - data manipulation
 * `matplotlib`,`seaborn` - visualization
@@ -127,7 +121,7 @@ pip install -r requirements.txt
 
 ### 1. Primitive Profiling
 
-1. Configure primitives to be profiling under `in/primitives.yaml`. 
+1. Configure primitives to profile under `in/primitives.yaml`.
 2. Configure `in/perf_events.yaml` with the desired performance events to be profiled.
 
 ```bash
@@ -141,7 +135,7 @@ python3 benchmark-main.py \
   --csv-name example_run
 ```
 
-Results will be outputted to the csv `out/primitives-example_run-csv.csv`. By default, runtime analysis and event profiling are enabled. 
+Results are written to `out/csv/primitive-results-example_run.csv`. By default, runtime analysis and event profiling are enabled.
 
 ### 2. Microbenchmark and Primitive Profiling
 
@@ -159,7 +153,7 @@ python3 benchmark-main.py \
   --csv-name example_run
 ```
 
-Results will be outputted to the csvs `out/primitives-example_run-csv.csv` and `out/microbenchmarks-example_run-csv.csv`. 
+Results are written to `out/csv/primitive-results-example_run.csv` and `out/csv/microbenchmark-results-example_run.csv`.
 
 ### 3. Workload Profiling with Flamegraphs
 
@@ -205,7 +199,7 @@ Performance model scripts and configuration files are located under `perf-model/
 | `-s, --security-standard-level` | `none`      | CKKS security level (`none`, `128c`, `192c`, `256c`, `128q`, `192q`, `256q`) |
 | `-n, --ring-dimension`          | `13`        | CKKS ring dimension exponent → actual N = 2<sup>N</sup>                      |
 | `-b, --batch-size`              | `12`        | CKKS batch size exponent (2<sup>b</sup>, must < N)                           |
-| `-d, --depth`                   | `5`         | Multiplicative depth                                                         |
+| `-d, --depth`                   | `10`        | Multiplicative depth                                                         |
 | `-t, --num-threads`             | `0`         | OpenMP thread count (`0` = all logical cores)                                |
 | `-p, --run-primitives`          | `False`     | Run primitive-level benchmarks                                               |
 | `-k, --run-microbenchmarks`     | `False`     | Run microbenchmarks                                                          |

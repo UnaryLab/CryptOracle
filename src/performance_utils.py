@@ -7,11 +7,9 @@ import math
 from datetime import datetime
 from typing import Dict, List
 import src.utils as utils
-from src.logging_utils import print_info, print_error, print_status, print_section_header
+from src.logging_utils import print_info, print_error
 from src.globals import script_globals
 
-
-# Starts the perf stat process to monitor power usage
 def start_perf(output_path: str) -> subprocess.Popen:
     with open(output_path, "w") as output_file:
         return subprocess.Popen(
@@ -25,8 +23,7 @@ def stop_perf(proc: subprocess.Popen) -> None:
         proc.kill()
         proc.wait()
         
-# Processes metrics data collected by perf
-def process_metrics(target: str, perf_results: Dict[str, Dict[str, float]]) -> Dict[str, Dict[str, float]]:
+def process_metrics(target: str, perf_results: Dict[str, Dict[str, float]]) -> None:
     for event in script_globals.perf_events:
         perf_metric_name = event
         parse_and_extract_perf_data(target, perf_metric_name, perf_results)
@@ -62,13 +59,11 @@ def compute_execution_metrics(microbenchmark: str, execution_time: float, setup_
     
     cpu_cycles = float(perf_results.get("cpu-cycles", 0))
 
-    # Calculate IPC
     perf_results["ipc"] = utils.compute_ipc(
         float(perf_results.get("instructions", 0)),
         cpu_cycles
     )
         
-# Prints the runtime analysis results for a single target
 def print_runtime_results(target: str, perf_results: Dict[str, float]) -> None:
     print_info(f"{target}:")
     for event in perf_results:
@@ -79,9 +74,8 @@ def initialize_csv_file(csv_output_file: str, target_items: List[str], args: arg
     """Initializes the CSV file with headers."""
     headers = ["Date and Time of Benchmark"] + list(script_globals.hardware_stats.keys())
 
-    # Matrix size should only be included in the csv in certain cases
     headers += [
-        "security_standard_level", "n", "batch_size", "depth", "num_threads",#"matrix_size", 
+        "security_standard_level", "n", "batch_size", "depth", "num_threads",
         "runtime_analysis", "event_profiling", "flamegraph_generation", "build", "compiler_optimizations", "cold_caching"
     ]
 
@@ -113,9 +107,8 @@ def save_results_csv(csv_output_path: str,args: argparse.Namespace, target_items
     
     csv_row += [script_globals.hardware_stats.get(key, "N/A") for key in script_globals.hardware_stats]
 
-    # Matrix size should only be included in the csv in certain cases
     csv_row += [
-        args.security_standard_level, args.ring_dimension, args.batch_size, args.depth, args.num_threads, #args.matrix_size,
+        args.security_standard_level, args.ring_dimension, args.batch_size, args.depth, args.num_threads,
         args.runtime_analysis, args.event_profiling, args.flamegraph_generation, args.build, args.compiler_optimizations, args.cold_caching
     ]
     
@@ -143,7 +136,7 @@ def generate_flamegraph(args: argparse.Namespace, target: str, cmd: str, cwd: st
     output_dir: str = utils.get_absolute_path(os.path.join("out", "flamegraphs"))
     os.makedirs(output_dir, exist_ok=True)
 
-    polling_frequency: int = 5000
+    polling_frequency: int = 1000
 
     try:
         subprocess.run(
